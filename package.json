@@ -1,0 +1,25 @@
+{
+  "name": "pathfinder-ai",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PathFinder AI monorepo - student interest discovery and growth platform",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @pathfinder/web",
+    "build:web": "npm run build -w @pathfinder/web",
+    "test:web": "npm run test -w @pathfinder/web",
+    "e2e:web": "npm run e2e -w @pathfinder/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "gen:types": "node scripts/gen-types.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.8.3"
+  }
+}

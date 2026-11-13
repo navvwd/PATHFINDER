@@ -18,3 +18,5 @@ backend/storage/
 backend/*.db
 *.log
 .DS_Store
+backend-dev.log
+web-dev.log

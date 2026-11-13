@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@import "@pathfinder/design-system/tokens.css";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-bg: var(--pf-bg);
+  --color-surface: var(--pf-surface);
+  --color-muted: var(--pf-surface-muted);
+  --color-line: var(--pf-border);
+  --color-ink: var(--pf-text);
+  --color-subtle: var(--pf-text-muted);
+  --color-primary: var(--pf-primary);
+  --color-primary-hover: var(--pf-primary-hover);
+  --color-primary-soft: var(--pf-primary-soft);
+  --color-on-primary: var(--pf-primary-text);
+  --color-accent: var(--pf-accent);
+  --color-success: var(--pf-success);
+  --color-success-soft: var(--pf-success-soft);
+  --color-warning: var(--pf-warning);
+  --color-warning-soft: var(--pf-warning-soft);
+  --color-danger: var(--pf-danger);
+  --color-danger-soft: var(--pf-danger-soft);
+  --color-info: var(--pf-info);
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-junior: "Nunito", "Inter", sans-serif;
+  --shadow-card: var(--pf-shadow);
+  --radius-card: var(--pf-radius);
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--pf-bg);
+  color: var(--pf-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+[data-experience="junior"] { font-family: var(--font-junior); }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
+[data-experience="junior"] h1, [data-experience="junior"] h2, [data-experience="junior"] h3 { font-family: var(--font-junior); }
+
+:focus-visible { outline: 3px solid var(--pf-ring); outline-offset: 2px; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--pf-surface-muted) 25%, var(--pf-border) 37%, var(--pf-surface-muted) 63%);
+  background-size: 400% 100%;
+  animation: pf-shimmer 1.4s ease infinite;
+}
+@keyframes pf-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }

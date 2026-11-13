@@ -1,0 +1,73 @@
+/* PathFinder design tokens (CSS variables). Light is default; dark via prefers-color-scheme or [data-theme]. */
+:root {
+  --pf-bg: #f7f8fc;
+  --pf-surface: #ffffff;
+  --pf-surface-muted: #f1f3f9;
+  --pf-border: #e3e6ef;
+  --pf-text: #0f172a;
+  --pf-text-muted: #5b6478;
+  --pf-primary: #4f46e5;
+  --pf-primary-hover: #4338ca;
+  --pf-primary-soft: #eef2ff;
+  --pf-primary-text: #ffffff;
+  --pf-accent: #f59e0b;
+  --pf-success: #059669;
+  --pf-success-soft: #ecfdf5;
+  --pf-warning: #b45309;
+  --pf-warning-soft: #fffbeb;
+  --pf-danger: #dc2626;
+  --pf-danger-soft: #fef2f2;
+  --pf-info: #0284c7;
+  --pf-ring: rgba(79, 70, 229, 0.35);
+  --pf-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
+  --pf-radius: 16px;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --pf-bg: #0b0f1a;
+  --pf-surface: #131a2a;
+  --pf-surface-muted: #1a2335;
+  --pf-border: #273149;
+  --pf-text: #e8ecf6;
+  --pf-text-muted: #9aa4ba;
+  --pf-primary: #818cf8;
+  --pf-primary-hover: #a5b4fc;
+  --pf-primary-soft: #1e2347;
+  --pf-primary-text: #0b0f1a;
+  --pf-success-soft: #0b2a20;
+  --pf-warning: #fbbf24;
+  --pf-warning-soft: #2a2110;
+  --pf-danger-soft: #2a1215;
+  --pf-ring: rgba(129, 140, 248, 0.45);
+  --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pf-bg: #0b0f1a;
+    --pf-surface: #131a2a;
+    --pf-surface-muted: #1a2335;
+    --pf-border: #273149;
+    --pf-text: #e8ecf6;
+    --pf-text-muted: #9aa4ba;
+    --pf-primary: #818cf8;
+    --pf-primary-hover: #a5b4fc;
+    --pf-primary-soft: #1e2347;
+    --pf-primary-text: #0b0f1a;
+    --pf-success-soft: #0b2a20;
+    --pf-warning: #fbbf24;
+    --pf-warning-soft: #2a2110;
+    --pf-danger-soft: #2a1215;
+    --pf-ring: rgba(129, 140, 248, 0.45);
+    --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+
+/* Junior experience (ages 6-11): bigger type, rounder shapes */
+[data-experience="junior"] {
+  --pf-radius: 24px;
+  font-size: 17px;
+}

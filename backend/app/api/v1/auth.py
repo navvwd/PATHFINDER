@@ -31,6 +31,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 settings = get_settings()
 COOKIE = "pf_refresh"
 auth_limit = rate_limit("auth", settings.AUTH_RATE_LIMIT_PER_MINUTE)
+refresh_limit = rate_limit("refresh", settings.AUTH_RATE_LIMIT_PER_MINUTE * 6)
 
 
 def _set_cookie(resp: Response, token: str) -> None:
@@ -70,7 +71,7 @@ def login(data: LoginRequest, request: Request, response: Response, db: DB):
     return _tokens(response, data.client, access, exp, refresh)
 
 
-@router.post("/refresh", response_model=TokenPair, dependencies=[Depends(auth_limit)])
+@router.post("/refresh", response_model=TokenPair, dependencies=[Depends(refresh_limit)])
 def refresh(request: Request, response: Response, db: DB, data: RefreshRequest | None = None):
     token = (data.refresh_token if data else None) or request.cookies.get(COOKIE)
     client = "mobile" if data and data.refresh_token else "web"

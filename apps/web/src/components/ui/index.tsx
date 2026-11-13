@@ -11,13 +11,15 @@ import { confidenceStyle } from "@pathfinder/design-system";
 export const cx = (...c: Array<string | false | null | undefined>) => c.filter(Boolean).join(" ");
 
 // ---------------------------------------------------------------- Button
-type Variant = "primary" | "secondary" | "ghost" | "danger" | "soft";
+type Variant = "primary" | "secondary" | "ghost" | "danger" | "soft" | "lime" | "dark";
 const variants: Record<Variant, string> = {
   primary: "bg-primary text-on-primary hover:bg-primary-hover shadow-sm",
   secondary: "bg-surface text-ink border border-line hover:bg-muted",
   ghost: "text-ink hover:bg-muted",
   danger: "bg-danger text-white hover:opacity-90",
   soft: "bg-primary-soft text-primary hover:opacity-90",
+  lime: "bg-lime text-lime-ink hover:bg-lime-hover shadow-sm",
+  dark: "bg-navy text-surface hover:opacity-90",
 };
 export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant; size?: "sm" | "md" | "lg"; loading?: boolean; icon?: ReactNode;
@@ -26,7 +28,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLBut
     ref={ref}
     disabled={disabled || loading}
     className={cx(
-      "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+      "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
       size === "sm" ? "h-8 px-3 text-sm" : size === "lg" ? "h-12 px-6 text-base" : "h-10 px-4 text-sm",
       variants[variant], className)}
     {...rest}

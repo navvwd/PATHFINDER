@@ -22,9 +22,10 @@ export function Card({ children, onPress, className = "" }: { children: ReactNod
 
 export function Button({ label, onPress, loading, variant = "primary", disabled }: { label: string; onPress: () => void; loading?: boolean; variant?: "primary" | "secondary"; disabled?: boolean }) {
   const cls = variant === "primary" ? "bg-primary" : "bg-surface border border-line";
+  // pill shape matches the web design system
   return (
     <Pressable accessibilityRole="button" accessibilityState={{ disabled: disabled || loading }} disabled={disabled || loading} onPress={onPress}
-      className={`h-12 items-center justify-center rounded-xl px-4 ${cls} ${disabled ? "opacity-50" : ""}`}>
+      className={`h-12 items-center justify-center rounded-full px-5 ${cls} ${disabled ? "opacity-50" : ""}`}>
       {loading ? <ActivityIndicator color={variant === "primary" ? "#fff" : undefined} /> : <Text className={variant === "primary" ? "font-semibold text-white" : "font-semibold text-ink"}>{label}</Text>}
     </Pressable>
   );

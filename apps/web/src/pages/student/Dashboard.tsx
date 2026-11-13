@@ -28,7 +28,7 @@ export function Dashboard() {
                 <h1 className={junior ? "text-3xl font-extrabold" : "text-2xl sm:text-3xl font-bold"}>{d.greeting}</h1>
                 <p className="text-subtle">{junior ? "Let's learn something awesome today!" : "Here's your learning snapshot."}</p>
               </div>
-              <div className="flex gap-2"><Link to="/app/activities"><Button icon={<Zap className="size-4" />}>Start an activity</Button></Link></div>
+              <div className="flex gap-2"><Link to="/app/activities"><Button variant="lime" icon={<Zap className="size-4" />}>Start an activity</Button></Link></div>
             </motion.div>
 
             {consent === "pending" && (

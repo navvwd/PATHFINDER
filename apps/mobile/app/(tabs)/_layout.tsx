@@ -8,7 +8,7 @@ export default function TabsLayout() {
   const role = useSession((s) => s.me?.user.role);
   const student = role === "student";
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "#4f46e5", headerShadowVisible: false }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: "#1769e0", headerShadowVisible: false }}>
       <Tabs.Screen name="index" options={{ title: student ? "Home" : "Children", tabBarIcon: icon("⌂") }} />
       <Tabs.Screen name="domains" options={{ title: "Explore", tabBarIcon: icon("◎"), href: student ? undefined : null }} />
       <Tabs.Screen name="activities" options={{ title: "Activities", tabBarIcon: icon("✦"), href: student ? undefined : null }} />

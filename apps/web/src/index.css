@@ -22,8 +22,13 @@
   --color-danger: var(--pf-danger);
   --color-danger-soft: var(--pf-danger-soft);
   --color-info: var(--pf-info);
+  --color-lime: var(--pf-lime);
+  --color-lime-hover: var(--pf-lime-hover);
+  --color-lime-ink: var(--pf-lime-ink);
+  --color-navy: var(--pf-navy);
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-display: "Inter Tight", "Inter", sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
   --font-junior: "Nunito", "Inter", sans-serif;
   --shadow-card: var(--pf-shadow);
   --radius-card: var(--pf-radius);
@@ -37,7 +42,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 [data-experience="junior"] { font-family: var(--font-junior); }
-h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+.eyebrow { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; }
 [data-experience="junior"] h1, [data-experience="junior"] h2, [data-experience="junior"] h3 { font-family: var(--font-junior); }
 
 :focus-visible { outline: 3px solid var(--pf-ring); outline-offset: 2px; border-radius: 6px; }

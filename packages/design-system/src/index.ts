@@ -4,7 +4,9 @@
  */
 
 export const palette = {
-  brand: { 50: "#eef2ff", 100: "#e0e7ff", 200: "#c7d2fe", 300: "#a5b4fc", 400: "#818cf8", 500: "#6366f1", 600: "#4f46e5", 700: "#4338ca", 800: "#3730a3", 900: "#312e81" },
+  brand: { 50: "#e8f1ff", 100: "#cfe3ff", 200: "#a3caff", 300: "#6eaaff", 400: "#5aa2ff", 500: "#2f8df5", 600: "#1769e0", 700: "#0f57c2", 800: "#0d3a75", 900: "#0b1b33" },
+  lime: { 300: "#e6fb8f", 400: "#d9f85a", 500: "#c9ec3c" },
+  navy: "#0b1b33",
   accent: { 400: "#fbbf24", 500: "#f59e0b", 600: "#d97706" },
   success: "#059669",
   warning: "#d97706",
@@ -33,7 +35,7 @@ export const domainColors: Record<string, string> = {
 };
 
 export const typography = {
-  fontFamily: { sans: "'Inter', system-ui, sans-serif", display: "'Plus Jakarta Sans', 'Inter', sans-serif", junior: "'Nunito', 'Inter', sans-serif" },
+  fontFamily: { sans: "'Inter', system-ui, sans-serif", display: "'Inter Tight', 'Inter', sans-serif", mono: "'DM Mono', ui-monospace, monospace", junior: "'Nunito', 'Inter', sans-serif" },
   size: { xs: 12, sm: 14, base: 16, lg: 18, xl: 20, "2xl": 24, "3xl": 30, "4xl": 36 },
   weight: { regular: 400, medium: 500, semibold: 600, bold: 700, extrabold: 800 },
 } as const;

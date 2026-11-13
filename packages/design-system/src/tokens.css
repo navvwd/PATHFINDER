@@ -1,4 +1,4 @@
-/* PathFinder design tokens (CSS variables). Light is default; dark via prefers-color-scheme or [data-theme]. */
+/* PathFinder design tokens - sky blue primary, lime highlight, navy ink. (CSS variables). Light is default; dark via prefers-color-scheme or [data-theme]. */
 :root {
   --pf-bg: #f7f8fc;
   --pf-surface: #ffffff;
@@ -6,11 +6,17 @@
   --pf-border: #e3e6ef;
   --pf-text: #0f172a;
   --pf-text-muted: #5b6478;
-  --pf-primary: #4f46e5;
-  --pf-primary-hover: #4338ca;
-  --pf-primary-soft: #eef2ff;
+  --pf-primary: #1769e0;
+  --pf-primary-hover: #0f57c2;
+  --pf-primary-soft: #e8f1ff;
   --pf-primary-text: #ffffff;
   --pf-accent: #f59e0b;
+  --pf-lime: #d9f85a;
+  --pf-lime-hover: #c9ec3c;
+  --pf-lime-ink: #0b1b33;
+  --pf-navy: #0b1b33;
+  --pf-sky-top: #2f8df5;
+  --pf-sky-bottom: #cfe7ff;
   --pf-success: #059669;
   --pf-success-soft: #ecfdf5;
   --pf-warning: #b45309;
@@ -18,7 +24,7 @@
   --pf-danger: #dc2626;
   --pf-danger-soft: #fef2f2;
   --pf-info: #0284c7;
-  --pf-ring: rgba(79, 70, 229, 0.35);
+  --pf-ring: rgba(23, 105, 224, 0.35);
   --pf-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
   --pf-radius: 16px;
   color-scheme: light;
@@ -31,15 +37,18 @@
   --pf-border: #273149;
   --pf-text: #e8ecf6;
   --pf-text-muted: #9aa4ba;
-  --pf-primary: #818cf8;
-  --pf-primary-hover: #a5b4fc;
-  --pf-primary-soft: #1e2347;
+  --pf-primary: #5aa2ff;
+  --pf-primary-hover: #86bbff;
+  --pf-primary-soft: #102a4d;
+  --pf-navy: #e8f1ff;
+  --pf-sky-top: #0d3a75;
+  --pf-sky-bottom: #0b1a33;
   --pf-primary-text: #0b0f1a;
   --pf-success-soft: #0b2a20;
   --pf-warning: #fbbf24;
   --pf-warning-soft: #2a2110;
   --pf-danger-soft: #2a1215;
-  --pf-ring: rgba(129, 140, 248, 0.45);
+  --pf-ring: rgba(90, 162, 255, 0.45);
   --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
   color-scheme: dark;
 }
@@ -52,15 +61,18 @@
     --pf-border: #273149;
     --pf-text: #e8ecf6;
     --pf-text-muted: #9aa4ba;
-    --pf-primary: #818cf8;
-    --pf-primary-hover: #a5b4fc;
-    --pf-primary-soft: #1e2347;
+    --pf-primary: #5aa2ff;
+    --pf-primary-hover: #86bbff;
+    --pf-primary-soft: #102a4d;
+    --pf-navy: #e8f1ff;
+    --pf-sky-top: #0d3a75;
+    --pf-sky-bottom: #0b1a33;
     --pf-primary-text: #0b0f1a;
     --pf-success-soft: #0b2a20;
     --pf-warning: #fbbf24;
     --pf-warning-soft: #2a2110;
     --pf-danger-soft: #2a1215;
-    --pf-ring: rgba(129, 140, 248, 0.45);
+    --pf-ring: rgba(90, 162, 255, 0.45);
     --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
     color-scheme: dark;
   }

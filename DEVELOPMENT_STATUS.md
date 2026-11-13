@@ -70,8 +70,18 @@ executed in this environment** (no Docker/PostgreSQL available locally).
 
 ## Deployment status
 
-Not deployed. Docker images and compose are written but **not built locally** (Docker is not installed on the
-development machine); CI builds them. See `infrastructure/deployment/DEPLOYMENT.md`.
+Deployed on Vercel (team "navvwd's projects"), auto-deployed from GitHub `navvwd/PATHFINDER`:
+
+| Project | URL | Root Directory | Notes |
+|---|---|---|---|
+| pathfinder-web | https://pathfinder-web-azure.vercel.app | `apps/web` | Vite build; `/api/*` rewritten to the API (same-origin auth cookie), SPA fallback (`apps/web/vercel.json`) |
+| pathfinder-api | https://pathfinder-api-mu.vercel.app | `deploy/vercel-api` | FastAPI on Vercel Python; installs `backend/` and `ai-engine/` as packages |
+
+- Pushes to `main` deploy both to production; other branches get preview deployments.
+- Database: Neon Postgres (`pathfinder-db`, Vercel Marketplace), env vars injected by the integration. Migrations are **not** run on deploy: run `python -m app.cli migrate` locally with `DATABASE_URL` set to the Neon *unpooled* URL after adding a migration.
+- API production env: `ENVIRONMENT=production`, generated `JWT_SECRET`, `COOKIE_SECURE`, `TRUST_PROXY_HEADERS`, `STORAGE_DIR=/tmp/...`, `AI_PROVIDER=none`, `CORS_ORIGINS`/`FRONTEND_URL` = web URL.
+- Limits on this setup: uploads live in `/tmp` and do not persist (needs Vercel Blob); rate-limit counters are per instance (add Redis/Upstash for shared limits); no AI key configured.
+- Docker images/compose remain available for self-hosting (`infrastructure/deployment/DEPLOYMENT.md`).
 
 ## Known limitations / pending work
 

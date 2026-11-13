@@ -1,0 +1,13 @@
+# Packaging only, so deploy targets (e.g. deploy/vercel-api) can `pip install ../../backend`.
+# Runtime dependencies stay in requirements.txt; local dev keeps using that file.
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pathfinder-backend"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["app*"]

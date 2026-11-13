@@ -150,6 +150,11 @@ def build_dashboard(db: Session, s: Student) -> dict:
                                              Activity.deleted_at.is_(None), Activity.min_age <= age, Activity.max_age >= age)
                       .order_by(Activity.difficulty, Activity.title)).all()
     pool = [a for a in pool if a.id not in done_ids]
+    if not pool:
+        # Everything in the chosen domains is done: invite exploration of other domains.
+        pool = [a for a in db.scalars(select(Activity).where(
+            Activity.status == "published", Activity.deleted_at.is_(None), Activity.min_age <= age,
+            Activity.max_age >= age).order_by(Activity.difficulty, Activity.title)).all() if a.id not in done_ids]
     seed = date.today().toordinal()
     daily = [pool[(seed + k * 7) % len(pool)] for k in range(min(3, len(pool)))] if pool else []
     daily = list({a.id: a for a in daily}.values())

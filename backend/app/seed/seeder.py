@@ -50,6 +50,7 @@ from ..models import (
     SchoolClass,
     Student,
     StudentGuardian,
+    StudentAchievement,
     StudentInterest,
     Subdomain,
     Submission,
@@ -461,6 +462,16 @@ def seed_demo(db: Session, now: datetime | None = None) -> dict:
     for s in students:
         ensure_default_goals(db, s)
         check_achievements(db, s)
+        # Demo badges belong to the simulated history, not to "now".
+        db.flush()
+        last = db.scalar(select(ProgressEvent.occurred_at).where(
+            ProgressEvent.student_id == s.id, ProgressEvent.event_type != "achievement_unlocked")
+            .order_by(ProgressEvent.occurred_at.desc())) or now - timedelta(days=3)
+        for k, ev in enumerate(db.scalars(select(ProgressEvent).where(
+                ProgressEvent.student_id == s.id, ProgressEvent.event_type == "achievement_unlocked")).all()):
+            ev.occurred_at = last - timedelta(days=2 + k * 6)
+        for k, sa in enumerate(db.scalars(select(StudentAchievement).where(StudentAchievement.student_id == s.id)).all()):
+            sa.awarded_at = last - timedelta(days=2 + k * 6)
         compute_scores(db, s)
         generate_recommendations(db, s)
 

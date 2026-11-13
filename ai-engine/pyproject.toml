@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pathfinder-engine"
+version = "0.1.0"
+description = "PathFinder AI explainable scoring, analytics, recommendation and report engine"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2.1"]
+
+[tool.setuptools.packages.find]
+include = ["pathfinder_engine*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

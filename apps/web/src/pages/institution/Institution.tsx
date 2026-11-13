@@ -18,8 +18,8 @@ export function InstitutionHome() {
         <>
           <PageHeader title={i.name} subtitle={`Code ${i.code} · ${i.is_active ? "Active" : "Pending approval"}`} />
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <Stat label="Students" value={i.students} icon={<GraduationCap className="size-4 text-primary" />} />
-            <Stat label="Staff" value={i.staff} icon={<Users className="size-4 text-primary" />} />
+            <Stat label="Students" value={i.students} icon={<GraduationCap className="size-4 text-primary-ink" />} />
+            <Stat label="Staff" value={i.staff} icon={<Users className="size-4 text-primary-ink" />} />
             <Stat label="Active (30 days)" value={analytics.data?.active_students_30d ?? "-"} />
             <Stat label="Plan" value={i.subscription?.plan_code ?? "-"} hint={i.subscription ? `${(sub.data?.seats_used as number) ?? "-"} / ${i.subscription.seats} seats` : undefined} />
           </div>

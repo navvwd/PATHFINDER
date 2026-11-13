@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { History, Sparkles, Star } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import { Badge, Button, Card, CardBody, CardHeader, cx, PageHeader, QueryState, Tabs, useToast } from "@/components/ui";
 import { api } from "@/lib/auth";
 import { fmtDate } from "@/lib/format";
@@ -8,7 +9,10 @@ import { fmtDate } from "@/lib/format";
 type Sel = { domain_id: string; subdomain_id: string | null; strength: number; is_favourite: boolean };
 
 export function Interests() {
-  const [tab, setTab] = useState<"choose" | "quiz" | "evolution">("choose");
+  const [params, setParams] = useSearchParams();
+  const raw = params.get("tab");
+  const tab: "choose" | "quiz" | "evolution" = raw === "quiz" || raw === "evolution" ? raw : "choose";
+  const setTab = (t: "choose" | "quiz" | "evolution") => setParams(t === "choose" ? {} : { tab: t }, { replace: true });
   return (
     <>
       <PageHeader title="Interest discovery" subtitle="Your interests are your choice. They're kept separate from scores - liking something is enough reason to explore it." />
@@ -118,7 +122,7 @@ function Questionnaire({ onApplied }: { onApplied: () => void }) {
                 {qu.options.map((o) => {
                   const on = answers[qu.id]?.includes(o.id);
                   return <button key={o.id} aria-pressed={on} onClick={() => setAnswers({ ...answers, [qu.id]: on ? answers[qu.id]!.filter((x) => x !== o.id) : [...(answers[qu.id] ?? []), o.id] })}
-                    className={cx("rounded-xl border p-3 text-left text-sm", on ? "border-primary bg-primary-soft text-primary" : "border-line hover:bg-muted")}>{o.label}</button>;
+                    className={cx("rounded-xl border p-3 text-left text-sm", on ? "border-primary bg-primary-soft text-primary-ink" : "border-line hover:bg-muted")}>{o.label}</button>;
                 })}
               </div>
             </Card>

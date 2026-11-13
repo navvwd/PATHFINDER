@@ -1,85 +1,83 @@
-/* PathFinder design tokens - sky blue primary, lime highlight, navy ink. (CSS variables). Light is default; dark via prefers-color-scheme or [data-theme]. */
+/* PathFinder design tokens - editorial neutrals with an orange-red accent.
+   Light is default; dark via prefers-color-scheme or [data-theme]. */
 :root {
-  --pf-bg: #f7f8fc;
+  --pf-bg: #f7f7f5;
   --pf-surface: #ffffff;
-  --pf-surface-muted: #f1f3f9;
-  --pf-border: #e3e6ef;
-  --pf-text: #0f172a;
-  --pf-text-muted: #5b6478;
-  --pf-primary: #1769e0;
-  --pf-primary-hover: #0f57c2;
-  --pf-primary-soft: #e8f1ff;
+  --pf-surface-muted: #eeeeec;
+  --pf-border: #e5e5e3;
+  --pf-text: #171717;
+  --pf-text-muted: #6b6b6b;
+  --pf-primary: #ff4d24;
+  --pf-primary-hover: #e93822;
+  --pf-primary-soft: #ffece6;
   --pf-primary-text: #ffffff;
-  --pf-accent: #f59e0b;
-  --pf-lime: #d9f85a;
-  --pf-lime-hover: #c9ec3c;
-  --pf-lime-ink: #0b1b33;
-  --pf-navy: #0b1b33;
-  --pf-sky-top: #2f8df5;
-  --pf-sky-bottom: #cfe7ff;
-  --pf-success: #059669;
-  --pf-success-soft: #ecfdf5;
-  --pf-warning: #b45309;
-  --pf-warning-soft: #fffbeb;
-  --pf-danger: #dc2626;
-  --pf-danger-soft: #fef2f2;
-  --pf-info: #0284c7;
-  --pf-ring: rgba(23, 105, 224, 0.35);
-  --pf-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
-  --pf-radius: 16px;
+  /* text-safe orange for links/labels on light surfaces (AA contrast) */
+  --pf-primary-ink: #c72e12;
+  --pf-ink: #171717;
+  --pf-ink-text: #ffffff;
+  --pf-dark: #171717;
+  --pf-accent: #ff4d24;
+  --pf-success: #15803d;
+  --pf-success-soft: #ecfdf3;
+  --pf-warning: #a16207;
+  --pf-warning-soft: #fef9e7;
+  --pf-danger: #e93822;
+  --pf-danger-soft: #fdecea;
+  --pf-info: #2563eb;
+  --pf-ring: rgba(255, 77, 36, 0.35);
+  --pf-shadow: 0 1px 2px rgba(23, 23, 23, 0.04), 0 8px 24px rgba(23, 23, 23, 0.06);
+  --pf-radius: 20px;
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  --pf-bg: #0b0f1a;
-  --pf-surface: #131a2a;
-  --pf-surface-muted: #1a2335;
-  --pf-border: #273149;
-  --pf-text: #e8ecf6;
-  --pf-text-muted: #9aa4ba;
-  --pf-primary: #5aa2ff;
-  --pf-primary-hover: #86bbff;
-  --pf-primary-soft: #102a4d;
-  --pf-navy: #e8f1ff;
-  --pf-sky-top: #0d3a75;
-  --pf-sky-bottom: #0b1a33;
-  --pf-primary-text: #0b0f1a;
-  --pf-success-soft: #0b2a20;
-  --pf-warning: #fbbf24;
-  --pf-warning-soft: #2a2110;
-  --pf-danger-soft: #2a1215;
-  --pf-ring: rgba(90, 162, 255, 0.45);
-  --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --pf-bg: #121212;
+  --pf-surface: #1c1c1c;
+  --pf-surface-muted: #262626;
+  --pf-border: #2f2f2f;
+  --pf-text: #f2f2f0;
+  --pf-text-muted: #a3a3a0;
+  --pf-primary: #ff5a33;
+  --pf-primary-hover: #ff7350;
+  --pf-primary-soft: #3a1a12;
+  --pf-primary-ink: #ff8a6b;
+  --pf-ink: #f2f2f0;
+  --pf-ink-text: #171717;
+  --pf-success-soft: #0f2a1a;
+  --pf-warning: #facc15;
+  --pf-warning-soft: #2a2410;
+  --pf-danger-soft: #3a1512;
+  --pf-ring: rgba(255, 90, 51, 0.45);
+  --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --pf-bg: #0b0f1a;
-    --pf-surface: #131a2a;
-    --pf-surface-muted: #1a2335;
-    --pf-border: #273149;
-    --pf-text: #e8ecf6;
-    --pf-text-muted: #9aa4ba;
-    --pf-primary: #5aa2ff;
-    --pf-primary-hover: #86bbff;
-    --pf-primary-soft: #102a4d;
-    --pf-navy: #e8f1ff;
-    --pf-sky-top: #0d3a75;
-    --pf-sky-bottom: #0b1a33;
-    --pf-primary-text: #0b0f1a;
-    --pf-success-soft: #0b2a20;
-    --pf-warning: #fbbf24;
-    --pf-warning-soft: #2a2110;
-    --pf-danger-soft: #2a1215;
-    --pf-ring: rgba(90, 162, 255, 0.45);
-    --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --pf-bg: #121212;
+    --pf-surface: #1c1c1c;
+    --pf-surface-muted: #262626;
+    --pf-border: #2f2f2f;
+    --pf-text: #f2f2f0;
+    --pf-text-muted: #a3a3a0;
+    --pf-primary: #ff5a33;
+    --pf-primary-hover: #ff7350;
+    --pf-primary-soft: #3a1a12;
+    --pf-primary-ink: #ff8a6b;
+    --pf-ink: #f2f2f0;
+    --pf-ink-text: #171717;
+    --pf-success-soft: #0f2a1a;
+    --pf-warning: #facc15;
+    --pf-warning-soft: #2a2410;
+    --pf-danger-soft: #3a1512;
+    --pf-ring: rgba(255, 90, 51, 0.45);
+    --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
     color-scheme: dark;
   }
 }
 
 /* Junior experience (ages 6-11): bigger type, rounder shapes */
 [data-experience="junior"] {
-  --pf-radius: 24px;
+  --pf-radius: 26px;
   font-size: 17px;
 }

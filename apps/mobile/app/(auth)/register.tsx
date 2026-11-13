@@ -41,7 +41,7 @@ export default function Register() {
         <Field label="School code (optional)" autoCapitalize="characters" value={f.institution_code} onChangeText={set("institution_code")} />
         <View className="mt-2"><Button label="Create account" onPress={submit} loading={loading} /></View>
         <Text className="mt-4 text-xs text-subtle">Under 18? A parent or guardian will be asked to give consent. Onboarding continues on the web or in the app.</Text>
-        <Link href="/(auth)/login" className="mt-6 text-center text-primary">Already have an account? Sign in</Link>
+        <Link href="/(auth)/login" className="mt-6 text-center text-primary-ink">Already have an account? Sign in</Link>
       </ScrollView>
     </SafeAreaView>
   );

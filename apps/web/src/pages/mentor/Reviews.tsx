@@ -59,8 +59,8 @@ export function ReviewSubmission() {
               <PageHeader title={s.activity_title} subtitle={`${s.student_name} · attempt ${s.attempt_no} · ${fmtDateTime(s.submitted_at)}`} />
               <Card><CardHeader title="Submission" /><CardBody className="space-y-3 text-sm">
                 {s.content_text && <p className="whitespace-pre-line rounded-xl bg-muted p-3">{s.content_text}</p>}
-                {s.link_url && <a href={s.link_url} target="_blank" rel="noopener noreferrer nofollow" className="text-primary underline">{s.link_url}</a>}
-                {s.files.map((f) => <button key={f.id} onClick={() => open(f.id)} className="flex items-center gap-2 text-primary"><Paperclip className="size-4" />{f.original_name}</button>)}
+                {s.link_url && <a href={s.link_url} target="_blank" rel="noopener noreferrer nofollow" className="text-primary-ink underline">{s.link_url}</a>}
+                {s.files.map((f) => <button key={f.id} onClick={() => open(f.id)} className="flex items-center gap-2 text-primary-ink"><Paperclip className="size-4" />{f.original_name}</button>)}
                 {s.reflection && <div><div className="text-xs font-semibold text-subtle">Student reflection</div><p>{s.reflection}</p></div>}
                 {s.self_rating && <div className="text-xs text-subtle">Enjoyment: {s.self_rating}/5</div>}
               </CardBody></Card>

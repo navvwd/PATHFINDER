@@ -21,7 +21,7 @@ export function Card({ children, onPress, className = "" }: { children: ReactNod
 }
 
 export function Button({ label, onPress, loading, variant = "primary", disabled }: { label: string; onPress: () => void; loading?: boolean; variant?: "primary" | "secondary"; disabled?: boolean }) {
-  const cls = variant === "primary" ? "bg-primary" : "bg-surface border border-line";
+  const cls = variant === "primary" ? "bg-dark" : "bg-surface border border-line";
   // pill shape matches the web design system
   return (
     <Pressable accessibilityRole="button" accessibilityState={{ disabled: disabled || loading }} disabled={disabled || loading} onPress={onPress}
@@ -42,10 +42,10 @@ export function Field({ label, error, ...props }: TextInputProps & { label: stri
 }
 
 export function Badge({ children }: { children: ReactNode }) {
-  return <View className="self-start rounded-full bg-primary-soft px-2.5 py-0.5"><Text className="text-xs font-medium text-primary">{children}</Text></View>;
+  return <View className="self-start rounded-full bg-primary-soft px-2.5 py-0.5"><Text className="text-xs font-medium text-primary-ink">{children}</Text></View>;
 }
 
-export function Bar({ value, color = "#4f46e5" }: { value: number; color?: string }) {
+export function Bar({ value, color = "#ff4d24" }: { value: number; color?: string }) {
   return (
     <View accessible accessibilityRole="progressbar" accessibilityValue={{ now: Math.round(Math.max(0, Math.min(100, value))), min: 0, max: 100 }} className="h-2 w-full overflow-hidden rounded-full bg-muted">
       <View style={{ width: `${Math.max(0, Math.min(100, value))}%`, backgroundColor: color }} className="h-full rounded-full" />

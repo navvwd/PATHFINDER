@@ -1,6 +1,6 @@
 # Development status
 
-_Last updated: 2026-11-13_
+_Last updated: 2026-11-14_
 
 ## Phase tracker
 
@@ -27,14 +27,22 @@ _Last updated: 2026-11-13_
 | 18 Testing & security | Done | See test results; security tests cover authz, tenancy, injection, upload validation, rate limits, token reuse |
 | 19 Deployment & documentation | Prepared, not deployed | Dockerfiles, compose, CI workflow, deployment runbook. **No production deployment has been performed.** |
 
+## UI redesign (ui.md brief)
+
+- Editorial design system: neutrals `#F7F7F5/#EEEEEC/#171717`, orange-red accent `#FF4D24/#E93822`, Space Grotesk + Inter; light and dark themes. Orange text uses an AA-safe ink (`#C72E12`); orange buttons use dark text (AA), default buttons are ink-black.
+- Marketing site rebuilt with all 11 sections (floating nav + mobile menu, cinematic hero with parallax and oversized type, discovery statement, asymmetric domain cards with multi-select carried into onboarding, scroll-drawn "how it works" timeline, labelled dashboard preview, live challenges from `GET /activities/featured`, AI insights with a clearly labelled example, parent/mentor cards, dark final CTA, footer). Motion respects `prefers-reduced-motion`.
+- New public pages: Privacy Policy, Terms and Conditions, Contact (form posts to `POST /contact`, delivered to platform admins).
+- Student app navigation follows the brief: My Interests, Explore Domains, Interest Discovery, Activities, Challenges, Assessments, My Skills, Growth Timeline, AI Insights, Personal Roadmap, Portfolio, Achievements (+ Notifications, Profile & Settings in the header).
+- Not done from the brief: social links (no official accounts provided - omitted rather than placeholder links), a content-moderation queue (needs a moderation data model), and photographic/3D imagery (abstract code-drawn visuals used instead).
+
 ## Test results (latest local run)
 
 | Suite | Result |
 |---|---|
 | AI engine (pytest) | 13 passed |
-| Backend (pytest, SQLite, migrated via Alembic) | 27 passed |
+| Backend (pytest, SQLite, migrated via Alembic) | 29 passed |
 | Web unit (Vitest + RTL) | 11 passed |
-| Web E2E (Playwright, live API + web) | 5 passed - student journey, mentor evaluation, parent consent/reports, admin + student blocked from admin, phone viewport |
+| Web E2E (Playwright, live API + web) | 6 passed - student journey, mentor evaluation, parent consent/reports, admin + student blocked from admin, phone viewport, redesign flows (domain preselect -> onboarding, new student pages) |
 | Mobile unit (jest-expo + RNTL) | 6 passed |
 | Mobile E2E (Playwright on Expo web, Pixel 7 viewport) | 2 passed |
 | Android JS bundle (`expo export`) | Builds (1,645 modules) |

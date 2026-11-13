@@ -36,7 +36,7 @@ test("new student registers, onboards, explores, submits and sees progress", asy
   await expect(page.getByRole("heading", { name: /Good (morning|afternoon|evening), Playwright/ })).toBeVisible();
 
   // explore all six domains
-  await page.getByRole("link", { name: "Six Domains" }).click();
+  await page.getByRole("link", { name: "Explore Domains" }).click();
   await expect(page.locator("a[href^='/app/domains/']")).toHaveCount(6);
   await page.getByRole("link", { name: /Science & Research/ }).click();
   await expect(page.getByRole("heading", { name: "Why explore it?" })).toBeVisible();
@@ -65,10 +65,11 @@ test("new student registers, onboards, explores, submits and sees progress", asy
   await expect(page.getByText(/points · attempt 1/)).toBeVisible();
 
   // progress + recommendations + portfolio render with real data
-  await page.getByRole("link", { name: "Progress" }).click();
+  await page.goto("/app/progress");
   await expect(page.getByText("Interest vs demonstrated skill")).toBeVisible();
-  await page.getByRole("link", { name: "Recommendations" }).click();
-  await page.getByRole("button", { name: /Refresh from my latest work/ }).click();
+  await page.getByRole("link", { name: "AI Insights" }).click();
+  await page.getByRole("tab", { name: "Recommendations" }).click();
+  await page.getByRole("button", { name: "Generate now" }).click();
   await expect(page.getByText(/not a test of intelligence/)).toBeVisible();
   await page.getByRole("link", { name: "Portfolio" }).click();
   await expect(page.getByText(/Private by default/)).toBeVisible();

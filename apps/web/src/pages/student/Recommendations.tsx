@@ -12,15 +12,30 @@ const kindLabel: Record<string, string> = {
   explore_domain: "Explore", alignment: "Interest & evidence",
 };
 
-export function Recommendations() {
+export function useRecommendationSet() {
   const qc = useQueryClient();
   const toast = useToast();
   const q = useQuery({ queryKey: ["recommendations"], queryFn: () => api.recommendations.get() });
   const gen = useMutation({ mutationFn: () => api.recommendations.generate(), onSuccess: (d) => qc.setQueryData(["recommendations"], d), onError: (e) => toast.error(e) });
+  return { q, gen };
+}
+
+export function Recommendations() {
+  const { gen } = useRecommendationSet();
   return (
     <>
       <PageHeader title="Your recommendations" subtitle="Explainable suggestions based on your chosen interests and recorded work."
         actions={<Button icon={<Sparkles className="size-4" />} loading={gen.isPending} onClick={() => gen.mutate()}>Refresh from my latest work</Button>} />
+      <RecommendationsBody />
+    </>
+  );
+}
+
+/** Recommendation list without page chrome (embedded in AI Insights). */
+export function RecommendationsBody() {
+  const { q, gen } = useRecommendationSet();
+  return (
+    <>
       <QueryState q={q}>
         {(r) => (
           <div className="space-y-6">

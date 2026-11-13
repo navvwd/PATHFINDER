@@ -15,18 +15,18 @@ export function MentorHome() {
     <>
       <PageHeader title={`Welcome, ${me.user.full_name.split(" ")[0]}`} subtitle="Your mentoring workspace" />
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Stat label="Students" value={students.data?.length ?? "-"} icon={<Users className="size-4 text-primary" />} />
+        <Stat label="Students" value={students.data?.length ?? "-"} icon={<Users className="size-4 text-primary-ink" />} />
         <Stat label="Submissions to review" value={queue.data?.submissions.length ?? "-"} icon={<Inbox className="size-4 text-warning" />} />
         <Stat label="Assessments to grade" value={queue.data?.attempts.length ?? "-"} icon={<ClipboardCheck className="size-4 text-info" />} />
         <Stat label="Suggestions to review" value={queue.data?.recommendations.length ?? "-"} icon={<Target className="size-4 text-success" />} />
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <Card><CardHeader title="Waiting for review" action={<Link className="text-sm text-primary" to="/mentor/reviews">Open queue</Link>} />
+        <Card><CardHeader title="Waiting for review" action={<Link className="text-sm text-primary-ink" to="/mentor/reviews">Open queue</Link>} />
           <CardBody className="space-y-2">
             {queue.data?.submissions.slice(0, 6).map((s) => <Link key={s.id} to={`/mentor/reviews/${s.id}`} className="flex items-center justify-between rounded-xl p-2 text-sm hover:bg-muted"><span><strong>{s.student_name}</strong> · {s.activity_title}</span><span className="text-xs text-subtle">{relTime(s.submitted_at)}</span></Link>)}
             {queue.data && !queue.data.submissions.length && <p className="text-sm text-subtle">Queue is empty.</p>}
           </CardBody></Card>
-        <Card><CardHeader title="Batches" action={<Link className="text-sm text-primary" to="/mentor/batches">Manage</Link>} />
+        <Card><CardHeader title="Batches" action={<Link className="text-sm text-primary-ink" to="/mentor/batches">Manage</Link>} />
           <CardBody className="space-y-2">{batches.data?.map((b) => <div key={b.id} className="flex justify-between rounded-xl bg-muted p-3 text-sm"><span>{b.name}</span><Badge>{b.student_count} students</Badge></div>)}
             {batches.data && !batches.data.length && <p className="text-sm text-subtle">No batches yet.</p>}</CardBody></Card>
       </div>
@@ -85,7 +85,7 @@ export function Batches() {
       <QueryState q={q} isEmpty={(d) => !d.length} empty={<EmptyState title="No batches yet" action={<Button onClick={() => setOpen(true)}>Create batch</Button>} />}>
         {(d) => <div className="grid gap-4 lg:grid-cols-2">{d.map((b) => (
           <Card key={b.id}><CardHeader title={b.name} subtitle={`${b.student_count} students`} action={<Button size="sm" variant="soft" onClick={() => { setForm({ name: "", ids: [] }); setAddTo(b.id); }}>Add students</Button>} />
-            <CardBody className="space-y-1">{b.students.map((s) => <div key={s.id} className="flex items-center justify-between rounded-lg p-1.5 text-sm hover:bg-muted"><Link to={`/mentor/students/${s.id}`} className="hover:text-primary">{s.full_name}</Link><button aria-label={`Remove ${s.full_name}`} onClick={() => remove.mutate({ b: b.id, s: s.id })}><Trash2 className="size-4 text-subtle hover:text-danger" /></button></div>)}</CardBody>
+            <CardBody className="space-y-1">{b.students.map((s) => <div key={s.id} className="flex items-center justify-between rounded-lg p-1.5 text-sm hover:bg-muted"><Link to={`/mentor/students/${s.id}`} className="hover:text-primary-ink">{s.full_name}</Link><button aria-label={`Remove ${s.full_name}`} onClick={() => remove.mutate({ b: b.id, s: s.id })}><Trash2 className="size-4 text-subtle hover:text-danger" /></button></div>)}</CardBody>
           </Card>))}</div>}
       </QueryState>
       <Modal open={open} onClose={() => setOpen(false)} title="New batch" footer={<Button loading={create.isPending} disabled={form.name.length < 2} onClick={() => create.mutate()}>Create</Button>}>

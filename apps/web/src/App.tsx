@@ -14,6 +14,9 @@ const Forgot = P(() => import("./pages/public/Auth"), "ForgotPassword");
 const Reset = P(() => import("./pages/public/Auth"), "ResetPassword");
 const InstitutionSignup = P(() => import("./pages/public/Auth"), "InstitutionSignup");
 const SharedPortfolio = P(() => import("./pages/public/SharedPortfolio"), "SharedPortfolio");
+const Privacy = P(() => import("./pages/public/Legal"), "Privacy");
+const Terms = P(() => import("./pages/public/Legal"), "Terms");
+const Contact = P(() => import("./pages/public/Legal"), "Contact");
 // student
 const Onboarding = P(() => import("./pages/student/Onboarding"), "Onboarding");
 const Dashboard = P(() => import("./pages/student/Dashboard"), "Dashboard");
@@ -34,6 +37,10 @@ const Roadmaps = P(() => import("./pages/student/Roadmap"), "Roadmaps");
 const RoadmapDetail = P(() => import("./pages/student/Roadmap"), "RoadmapDetail");
 const Assistant = P(() => import("./pages/student/Assistant"), "Assistant");
 const Achievements = P(() => import("./pages/student/Achievements"), "Achievements");
+const StudentChallenges = P(() => import("./pages/student/Growth"), "Challenges");
+const Skills = P(() => import("./pages/student/Growth"), "Skills");
+const Timeline = P(() => import("./pages/student/Growth"), "Timeline");
+const Insights = P(() => import("./pages/student/Growth"), "Insights");
 const Notifications = P(() => import("./pages/shared/Notifications"), "Notifications");
 const SettingsPage = P(() => import("./pages/shared/Settings"), "Settings");
 // guardian
@@ -81,6 +88,9 @@ export function App() {
         <Route path="/reset-password" element={<Reset />} />
         <Route path="/institutions/register" element={<InstitutionSignup />} />
         <Route path="/p/:token" element={<SharedPortfolio />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/contact" element={<Contact />} />
 
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
@@ -104,6 +114,10 @@ export function App() {
               <Route path="/app/roadmap/:id" element={<RoadmapDetail />} />
               <Route path="/app/assistant" element={<Assistant />} />
               <Route path="/app/achievements" element={<Achievements />} />
+              <Route path="/app/challenges" element={<StudentChallenges />} />
+              <Route path="/app/skills" element={<Skills />} />
+              <Route path="/app/timeline" element={<Timeline />} />
+              <Route path="/app/insights" element={<Insights />} />
               <Route path="/app/notifications" element={<Notifications />} />
               <Route path="/app/settings" element={<SettingsPage />} />
             </Route>

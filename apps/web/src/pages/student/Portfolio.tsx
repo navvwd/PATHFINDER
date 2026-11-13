@@ -40,8 +40,8 @@ export function PortfolioView({ p, editable }: { p: PortfolioT; editable: boolea
               <div className="mt-auto flex items-center justify-between pt-3 text-xs text-subtle">
                 <span>{fmtDate(i.created_on)}</span>
                 <span className="flex gap-2">
-                  {i.file_id && <button className="inline-flex items-center gap-1 text-primary" onClick={() => open(i.file_id!)}><Paperclip className="size-3" />{i.file_name ?? "File"}</button>}
-                  {i.external_url && <a className="inline-flex items-center gap-1 text-primary" href={i.external_url} target="_blank" rel="noopener noreferrer nofollow"><ExternalLink className="size-3" />Link</a>}
+                  {i.file_id && <button className="inline-flex items-center gap-1 text-primary-ink" onClick={() => open(i.file_id!)}><Paperclip className="size-3" />{i.file_name ?? "File"}</button>}
+                  {i.external_url && <a className="inline-flex items-center gap-1 text-primary-ink" href={i.external_url} target="_blank" rel="noopener noreferrer nofollow"><ExternalLink className="size-3" />Link</a>}
                 </span>
               </div>
             </Card>

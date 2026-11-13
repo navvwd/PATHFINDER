@@ -11,15 +11,15 @@ import { confidenceStyle } from "@pathfinder/design-system";
 export const cx = (...c: Array<string | false | null | undefined>) => c.filter(Boolean).join(" ");
 
 // ---------------------------------------------------------------- Button
-type Variant = "primary" | "secondary" | "ghost" | "danger" | "soft" | "lime" | "dark";
+type Variant = "primary" | "accent" | "secondary" | "ghost" | "danger" | "soft" | "dark";
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-on-primary hover:bg-primary-hover shadow-sm",
+  primary: "bg-inverse text-on-inverse hover:opacity-90 shadow-sm",
+  accent: "bg-[var(--pf-primary)] text-[#171717] hover:bg-[var(--pf-primary-hover)] shadow-sm",
   secondary: "bg-surface text-ink border border-line hover:bg-muted",
   ghost: "text-ink hover:bg-muted",
-  danger: "bg-danger text-white hover:opacity-90",
-  soft: "bg-primary-soft text-primary hover:opacity-90",
-  lime: "bg-lime text-lime-ink hover:bg-lime-hover shadow-sm",
-  dark: "bg-navy text-surface hover:opacity-90",
+  danger: "bg-[#b42318] text-white hover:opacity-90",
+  soft: "bg-primary-soft text-primary-ink hover:opacity-90",
+  dark: "bg-inverse text-on-inverse hover:opacity-90",
 };
 export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant; size?: "sm" | "md" | "lg"; loading?: boolean; icon?: ReactNode;
@@ -88,7 +88,7 @@ export function TagInput({ value, onChange, placeholder, suggestions = [] }: { v
     <div>
       <div className={cx(inputCls, "flex flex-wrap gap-1.5 min-h-11")}>
         {value.map((t) => (
-          <span key={t} className="inline-flex items-center gap-1 rounded-lg bg-primary-soft text-primary px-2 py-0.5 text-sm">
+          <span key={t} className="inline-flex items-center gap-1 rounded-lg bg-primary-soft text-primary-ink px-2 py-0.5 text-sm">
             {t}<button type="button" aria-label={`Remove ${t}`} onClick={() => onChange(value.filter((x) => x !== t))}><X className="size-3" /></button>
           </span>
         ))}
@@ -99,7 +99,7 @@ export function TagInput({ value, onChange, placeholder, suggestions = [] }: { v
       {suggestions.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {suggestions.filter((s) => !value.includes(s)).map((s) => (
-            <button type="button" key={s} onClick={() => add(s)} className="rounded-lg border border-dashed border-line px-2 py-0.5 text-xs text-subtle hover:border-primary hover:text-primary">+ {s}</button>
+            <button type="button" key={s} onClick={() => add(s)} className="rounded-lg border border-dashed border-line px-2 py-0.5 text-xs text-subtle hover:border-primary hover:text-primary-ink">+ {s}</button>
           ))}
         </div>
       )}
@@ -110,7 +110,7 @@ export function TagInput({ value, onChange, placeholder, suggestions = [] }: { v
 // ---------------------------------------------------------------- Badges, progress, stats
 type Tone = "neutral" | "primary" | "success" | "warning" | "danger" | "info";
 const tones: Record<Tone, string> = {
-  neutral: "bg-muted text-subtle", primary: "bg-primary-soft text-primary", success: "bg-success-soft text-success",
+  neutral: "bg-muted text-subtle", primary: "bg-primary-soft text-primary-ink", success: "bg-success-soft text-success",
   warning: "bg-warning-soft text-warning", danger: "bg-danger-soft text-danger", info: "bg-primary-soft text-info",
 };
 export const Badge = ({ tone = "neutral", children, className }: { tone?: Tone; children: ReactNode; className?: string }) =>
@@ -139,7 +139,7 @@ export const Stat = ({ label, value, hint, icon }: { label: string; value: React
 );
 
 export const Avatar = ({ name, size = 36 }: { name: string; size?: number }) => (
-  <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary font-semibold"
+  <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary-ink font-semibold"
     style={{ width: size, height: size, fontSize: size * 0.38 }} aria-hidden>
     {name.split(/\s+/).slice(0, 2).map((p) => p[0]).join("").toUpperCase()}
   </span>
@@ -162,7 +162,7 @@ export const PageSkeleton = () => (
 
 export const EmptyState = ({ title, body, action, icon }: { title: string; body?: ReactNode; action?: ReactNode; icon?: ReactNode }) => (
   <div className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-dashed border-line px-6 py-12 text-center">
-    <div className="mb-3 rounded-2xl bg-primary-soft p-3 text-primary">{icon ?? <Inbox className="size-6" />}</div>
+    <div className="mb-3 rounded-2xl bg-primary-soft p-3 text-primary-ink">{icon ?? <Inbox className="size-6" />}</div>
     <h3 className="font-semibold text-ink">{title}</h3>
     {body && <p className="mt-1 max-w-md text-sm text-subtle">{body}</p>}
     {action && <div className="mt-4">{action}</div>}

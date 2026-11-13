@@ -44,7 +44,8 @@ export function Activities() {
   const assigned = mine.data?.filter((m) => !m.is_voluntary && m.status !== "completed") ?? [];
   return (
     <>
-      <PageHeader title="Activity Centre" subtitle="Hands-on challenges matched to your age. Pick anything that sparks your curiosity." />
+      <PageHeader title="Activities" subtitle="Hands-on activities matched to your age. Pick anything that sparks your curiosity."
+        actions={<><Link to="/app/challenges"><Button variant="secondary">Challenges</Button></Link><Link to="/app/projects"><Button variant="secondary">My submissions & project ideas</Button></Link></>} />
       {assigned.length > 0 && (
         <Card className="mb-6"><CardHeader title="Assigned to you" />
           <CardBody className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{assigned.map((m) => m.activity && <ActivityCard key={m.id} a={{ ...m.activity, my_status: m.status }} />)}</CardBody>

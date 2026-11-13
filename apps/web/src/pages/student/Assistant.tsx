@@ -36,7 +36,7 @@ export function Assistant() {
           <div className="flex-1 space-y-4 overflow-y-auto p-5" aria-live="polite">
             {msgs.map((m, i) => (
               <div key={i} className={cx("flex gap-3", m.role === "user" && "flex-row-reverse")}>
-                <span className={cx("flex size-8 shrink-0 items-center justify-center rounded-full", m.role === "user" ? "bg-primary text-on-primary" : "bg-primary-soft text-primary")}>{m.role === "user" ? <User className="size-4" /> : <Bot className="size-4" />}</span>
+                <span className={cx("flex size-8 shrink-0 items-center justify-center rounded-full", m.role === "user" ? "bg-primary text-on-primary" : "bg-primary-soft text-primary-ink")}>{m.role === "user" ? <User className="size-4" /> : <Bot className="size-4" />}</span>
                 <div className={cx("max-w-[80%] rounded-2xl px-4 py-3 text-sm", m.role === "user" ? "bg-primary text-on-primary" : "bg-muted")}>
                   <p className="whitespace-pre-line">{m.text}</p>
                   {m.acts && m.acts.length > 0 && <div className="mt-3 space-y-1">{m.acts.map((a) => <Link key={a.id} to={`/app/activities/${a.id}`} className="block rounded-lg bg-surface px-3 py-2 text-ink hover:opacity-80">{a.title} <span className="text-xs text-subtle">· {a.domain}</span></Link>)}</div>}

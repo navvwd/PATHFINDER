@@ -20,7 +20,7 @@ export default function Profile() {
       <Card onPress={() => router.push("/notifications")}><Text className="font-semibold text-ink">Notifications {unread.data?.count ? `(${unread.data.count} new)` : ""}</Text></Card>
       {onboarding.data && (
         <Card><Text className="font-semibold text-ink">Guardian invite code</Text>
-          <Text selectable className="mt-1 font-mono text-2xl tracking-widest text-primary">{onboarding.data.guardian_invite_code}</Text>
+          <Text selectable className="mt-1 font-mono text-2xl tracking-widest text-primary-ink">{onboarding.data.guardian_invite_code}</Text>
           <Text className="text-xs text-subtle">Consent: {onboarding.data.consent_status.replace("_", " ")}</Text></Card>
       )}
       {me.user.role === "student" && (

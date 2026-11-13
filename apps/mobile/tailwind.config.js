@@ -1,4 +1,4 @@
-// Colours mirror packages/design-system tokens (light theme).
+// Colours mirror packages/design-system tokens: editorial neutrals + orange-red accent.
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
@@ -7,17 +7,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: "#f7f8fc",
+        bg: "#f7f7f5",
         surface: "#ffffff",
-        muted: "#f1f3f9",
-        line: "#e3e6ef",
-        ink: "#0f172a",
-        subtle: "#5b6478",
-        primary: "#1769e0",
-        lime: "#d9f85a",
-        navy: "#0b1b33",
-        "primary-soft": "#e8f1ff",
-        danger: "#dc2626",
+        muted: "#eeeeec",
+        line: "#e5e5e3",
+        ink: "#171717",
+        subtle: "#6b6b6b",
+        primary: "#ff4d24",
+        "primary-ink": "#c72e12",
+        dark: "#171717",
+        "primary-soft": "#ffece6",
+        danger: "#e93822",
         "danger-soft": "#fef2f2",
         success: "#059669",
       },

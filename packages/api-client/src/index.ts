@@ -185,6 +185,7 @@ export class PathfinderApi {
   // ------------------------------------------------------------------ activities
   activities = {
     list: (q?: Query) => this.get<T.Page<T.Activity>>("/activities", q),
+    featured: (limit = 6) => this.request<FeaturedActivity[]>("GET", "/activities/featured", { query: { limit }, auth: false }),
     get: (id: string) => this.get<T.Activity>(`/activities/${id}`),
     mine: (status?: string) => this.get<T.Assignment[]>("/activities/assigned/me", { status }),
     create: (body: unknown) => this.post<T.Activity>("/activities", body),
@@ -372,6 +373,9 @@ export class PathfinderApi {
     institution: (instId: string) => this.post<T.Report>(`/reports/institution/${instId}`),
   };
 
+  contact = (body: { name: string; email: string; topic: string; message: string }) =>
+    this.request<{ message: string }>("POST", "/contact", { body, auth: false });
+
   // ------------------------------------------------------------------ admin
   users = {
     list: (q?: Query) => this.get<T.Page<T.UserOut>>("/users", q),
@@ -397,6 +401,8 @@ export class PathfinderApi {
   };
 }
 
+export type FeaturedActivity = { id: string; title: string; domain: string; domain_slug: string; category: string; difficulty: number;
+  estimated_minutes: number; min_age: number; max_age: number; skills: string[] };
 export type Batch = { id: string; name: string; description: string | null; domain_id: string | null; student_count: number; students: T.StudentSummary[]; created_at: string };
 export type ReviewQueue = {
   submissions: T.Submission[];

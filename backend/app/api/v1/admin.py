@@ -11,7 +11,7 @@ from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import func, or_, select, text
 
 from ...core.config import get_settings
-from ...core.deps import DB, CurrentUser, Paging, is_global, require_permission
+from ...core.deps import DB, CurrentUser, Paging, is_global, rate_limit, require_permission
 from ...core.errors import Forbidden, NotFound, ValidationFailed
 from ...core.permissions import P, Role
 from ...core.ratelimit import limiter
@@ -69,8 +69,32 @@ class MeUpdate(BaseModel):
     theme: str | None = Field(default=None, pattern="^(light|dark|system)$")
 
 
+class ContactIn(BaseModel):
+    name: str = Field(min_length=2, max_length=120)
+    email: EmailStr
+    topic: str = Field(pattern="^(general|school|parent|mentor|privacy|support)$")
+    message: str = Field(min_length=10, max_length=3000)
+
+
 class DeleteMe(BaseModel):
     confirm: str = Field(pattern="^DELETE$")
+
+
+# ============================ public contact ============================
+
+@router.post("/contact", status_code=202, dependencies=[Depends(rate_limit("contact", 5, 3600))])
+def contact(data: ContactIn, request: Request, db: DB):
+    """Public contact form. Delivered to platform administrators as notifications
+    (an email/helpdesk integration can subscribe to the same audit event)."""
+    from ...services.notify import notify
+    admins = db.scalars(select(User.id).where(User.role.in_(("platform_admin", "super_admin")), User.is_active.is_(True),
+                                              User.deleted_at.is_(None))).all()
+    body = f"From {data.name} <{data.email}> [{data.topic}]: {data.message}"
+    for uid in admins:
+        notify(db, uid, "contact", f"Contact form: {data.topic}", body[:2000])
+    audit(db, "contact.submitted", category="admin", request=request, details={"topic": data.topic})
+    db.commit()
+    return {"message": "Thanks - your message has been received. We reply by email."}
 
 
 # ============================ users ============================

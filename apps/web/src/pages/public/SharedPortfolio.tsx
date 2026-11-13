@@ -23,7 +23,7 @@ export function SharedPortfolio() {
                   <h3 className="mt-2 font-semibold">{i.title}</h3>
                   {i.description && <p className="mt-1 text-sm text-subtle line-clamp-4">{i.description}</p>}
                   <p className="mt-3 text-xs text-subtle">{fmtDate(i.created_on)}</p>
-                  {i.external_url && <a href={i.external_url} target="_blank" rel="noopener noreferrer nofollow" className="mt-2 inline-block text-sm text-primary underline">View link</a>}
+                  {i.external_url && <a href={i.external_url} target="_blank" rel="noopener noreferrer nofollow" className="mt-2 inline-block text-sm text-primary-ink underline">View link</a>}
                 </Card>
               ))}
             </div>

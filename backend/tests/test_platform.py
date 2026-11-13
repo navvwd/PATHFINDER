@@ -175,3 +175,22 @@ def test_openapi_and_migration_parity(client):
         diff = compare_metadata(MigrationContext.configure(conn), Base.metadata)
     assert diff == [], diff
     _ = io
+
+
+def test_public_featured_activities(client):
+    r = client.get("/api/v1/activities/featured")
+    assert r.status_code == 200
+    items = r.json()
+    assert 1 <= len(items) <= 6
+    assert len({i["domain_slug"] for i in items}) == len(items)  # one per domain
+    assert all(set(i) >= {"title", "domain", "difficulty", "estimated_minutes", "skills"} for i in items)
+
+
+def test_public_contact_form_notifies_admins(client, as_user):
+    bad = client.post("/api/v1/contact", json={"name": "A", "email": "x", "topic": "general", "message": "short"})
+    assert bad.status_code == 422
+    ok = client.post("/api/v1/contact", json={"name": "Visitor", "email": "visitor@example.com", "topic": "school",
+                                              "message": "We would like a demo for our school."})
+    assert ok.status_code == 202
+    inbox = client.get("/api/v1/notifications", headers=as_user("admin")).json()
+    assert any(n["kind"] == "contact" for n in inbox["items"])

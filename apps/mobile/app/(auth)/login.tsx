@@ -24,13 +24,13 @@ export default function Login() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1">
         <ScrollView contentContainerClassName="flex-grow justify-center p-6">
           <Image source={require("../../assets/ev-mark.png")} accessibilityLabel="Edutainal Ventures" style={{ width: 100, height: 48 }} resizeMode="contain" className="mb-4" />
-          <Text className="text-3xl font-extrabold text-ink">PathFinder <Text className="text-primary">AI</Text></Text>
+          <Text className="text-3xl font-extrabold text-ink">PathFinder <Text className="text-primary-ink">AI</Text></Text>
           <Text className="mb-8 mt-2 text-subtle">Discover what you love. Grow what you're good at.</Text>
           {error ? <Text accessibilityRole="alert" className="mb-3 rounded-xl bg-danger-soft p-3 text-danger">{error}</Text> : null}
           <Field label="Email or mobile number" autoCapitalize="none" autoComplete="username" keyboardType="email-address" value={identifier} onChangeText={setIdentifier} />
           <Field label="Password" secureTextEntry autoComplete="password" value={password} onChangeText={setPassword} />
           <View className="mt-2"><Button label="Sign in" onPress={submit} loading={loading} /></View>
-          <Link href="/(auth)/register" className="mt-6 text-center text-primary">New here? Create a student account</Link>
+          <Link href="/(auth)/register" className="mt-6 text-center text-primary-ink">New here? Create a student account</Link>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

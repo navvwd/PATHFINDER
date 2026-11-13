@@ -41,7 +41,7 @@ export function Projects() {
       <QueryState q={subs} isEmpty={(d) => !d.items.length} empty={<EmptyState title="No submissions yet" body="Complete an activity to see it here." action={<Link to="/app/activities"><Button>Browse activities</Button></Link>} />}>
         {(d) => (
           <Table rows={d.items} rowKey={(r) => r.id} columns={[
-            { key: "a", header: "Activity", render: (r) => <Link className="text-primary hover:underline" to={`/app/activities/${r.activity_id}`}>{r.activity_title}</Link> },
+            { key: "a", header: "Activity", render: (r) => <Link className="text-primary-ink hover:underline" to={`/app/activities/${r.activity_id}`}>{r.activity_title}</Link> },
             { key: "n", header: "Attempt", render: (r) => r.attempt_no },
             { key: "s", header: "Status", render: (r) => <Badge tone={r.status === "evaluated" ? "success" : r.status === "returned" ? "warning" : "primary"}>{titleCase(r.status)}</Badge> },
             { key: "sc", header: "Score", render: (r) => { const e = r.evaluations.find((x) => x.is_current); return e ? `${e.normalized_score.toFixed(0)}%` : "-"; } },

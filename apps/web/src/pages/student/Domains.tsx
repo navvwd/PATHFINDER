@@ -114,7 +114,7 @@ export function SubdomainDetail() {
           {d.activities.length ? <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{d.activities.map((a) => <ActivityCard key={a.id} a={a} />)}</div>
             : <EmptyState icon={<Layers className="size-6" />} title="No activities here yet" body="Check the domain page for related activities." />}
           {d.resources.length > 0 && (
-            <Card className="mt-6"><CardHeader title="Resources" /><CardBody className="space-y-2">{d.resources.map((r) => <a key={r.id} className="block text-sm text-primary underline" href={r.url ?? "#"} target="_blank" rel="noopener noreferrer">{r.title}</a>)}</CardBody></Card>
+            <Card className="mt-6"><CardHeader title="Resources" /><CardBody className="space-y-2">{d.resources.map((r) => <a key={r.id} className="block text-sm text-primary-ink underline" href={r.url ?? "#"} target="_blank" rel="noopener noreferrer">{r.title}</a>)}</CardBody></Card>
           )}
           <p className="mt-4 text-xs text-subtle">Categories here: {[...new Set(d.activities.map((a) => categoryLabels[a.category]))].join(", ") || "-"}</p>
         </>

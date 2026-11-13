@@ -55,9 +55,9 @@ export function Login() {
         <Field label="Password" htmlFor="password" error={errors.password?.message}>
           <Input id="password" type="password" autoComplete="current-password" {...register("password")} invalid={!!errors.password} />
         </Field>
-        <div className="flex justify-end text-sm"><Link to="/forgot-password" className="text-primary hover:underline">Forgot password?</Link></div>
+        <div className="flex justify-end text-sm"><Link to="/forgot-password" className="text-primary-ink hover:underline">Forgot password?</Link></div>
         <Button type="submit" className="w-full" size="lg" loading={isSubmitting}>Sign in</Button>
-        <p className="text-center text-sm text-subtle">New here? <Link to="/register" className="text-primary hover:underline">Create an account</Link></p>
+        <p className="text-center text-sm text-subtle">New here? <Link to="/register" className="text-primary-ink hover:underline">Create an account</Link></p>
       </form>
     </AuthLayout>
   );
@@ -75,7 +75,7 @@ export function Register() {
         { key: "guardian", label: <span className="inline-flex items-center gap-1.5"><HeartHandshake className="size-4" />Parent / Guardian</span> },
       ]} />
       <div className="mt-5">{as === "student" ? <StudentForm /> : <GuardianForm />}</div>
-      <p className="mt-4 text-center text-sm text-subtle">Already have an account? <Link to="/login" className="text-primary hover:underline">Sign in</Link></p>
+      <p className="mt-4 text-center text-sm text-subtle">Already have an account? <Link to="/login" className="text-primary-ink hover:underline">Sign in</Link></p>
     </AuthLayout>
   );
 }
@@ -161,7 +161,7 @@ export function ForgotPassword() {
           <div className="flex gap-2 rounded-xl bg-success-soft p-3 text-sm text-success"><CheckCircle2 className="size-5 shrink-0" />{sent.msg}</div>
           {sent.token && (
             <p className="text-xs text-subtle">Development mode: email delivery is not configured, so the reset link is shown here.{" "}
-              <Link className="text-primary underline" to={`/reset-password?token=${encodeURIComponent(sent.token)}`}>Open reset link</Link></p>
+              <Link className="text-primary-ink underline" to={`/reset-password?token=${encodeURIComponent(sent.token)}`}>Open reset link</Link></p>
           )}
           <Link to="/login"><Button variant="secondary" className="w-full">Back to sign in</Button></Link>
         </div>

@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import {
-  Award, BarChart3, Bell, BookOpen, Bot, Briefcase, Building2, ClipboardCheck, Compass, Flag, FolderKanban, GraduationCap,
-  Home, Inbox, Layers, LogOut, Map, Menu, MessageSquare, Moon, Route as RouteIcon, ScrollText, Settings, Shield, Sparkles,
-  Sun, Target, Users, X,
+  Award, BarChart3, Bell, BookOpen, Bot, Briefcase, Building2, ClipboardCheck, Compass, Flag, GraduationCap,
+  History, Home, Inbox, Layers, Lightbulb, Zap, LogOut, Map, Menu, MessageSquare, Moon, Route as RouteIcon, ScrollText, Settings, Shield, Sparkles,
+  Sun, Users, X,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { Navigate, NavLink, Outlet, useLocation, useNavigate } from "react-router";
@@ -17,16 +18,17 @@ const I = (C: typeof Home) => <C className="size-[18px]" aria-hidden />;
 const NAV: Record<string, NavItem[]> = {
   student: [
     { to: "/app", label: "Dashboard", icon: I(Home), end: true },
-    { to: "/app/domains", label: "Six Domains", icon: I(Compass) },
-    { to: "/app/interests", label: "Interest Discovery", icon: I(Sparkles) },
-    { to: "/app/activities", label: "Activity Centre", icon: I(Layers) },
+    { to: "/app/interests", label: "My Interests", icon: I(Sparkles), end: true },
+    { to: "/app/domains", label: "Explore Domains", icon: I(Compass) },
+    { to: "/app/interests?tab=quiz", label: "Interest Discovery", icon: I(Lightbulb) },
+    { to: "/app/activities", label: "Activities", icon: I(Layers) },
+    { to: "/app/challenges", label: "Challenges", icon: I(Zap) },
     { to: "/app/assessments", label: "Assessments", icon: I(ClipboardCheck) },
-    { to: "/app/projects", label: "Projects", icon: I(FolderKanban) },
+    { to: "/app/skills", label: "My Skills", icon: I(BarChart3) },
+    { to: "/app/timeline", label: "Growth Timeline", icon: I(History) },
+    { to: "/app/insights", label: "AI Insights", icon: I(Bot) },
+    { to: "/app/roadmap", label: "Personal Roadmap", icon: I(Map) },
     { to: "/app/portfolio", label: "Portfolio", icon: I(Briefcase) },
-    { to: "/app/progress", label: "Progress", icon: I(BarChart3) },
-    { to: "/app/recommendations", label: "Recommendations", icon: I(Target) },
-    { to: "/app/roadmap", label: "Roadmap", icon: I(Map) },
-    { to: "/app/assistant", label: "AI Assistant", icon: I(Bot) },
     { to: "/app/achievements", label: "Achievements", icon: I(Award) },
   ],
   guardian: [
@@ -69,6 +71,14 @@ const NAV: Record<string, NavItem[]> = {
   ],
 };
 
+/** Items sharing a path (e.g. /app/interests and /app/interests?tab=quiz) are told apart by their query. */
+function queryMatches(to: string, search: string, nav: NavItem[]): boolean {
+  const [path, query] = to.split("?");
+  if (query) return new URLSearchParams(search).toString().includes(query);
+  const siblings = nav.filter((n) => n.to.startsWith(`${path}?`));
+  return !siblings.some((n) => new URLSearchParams(search).toString().includes(n.to.split("?")[1]!));
+}
+
 function navFor(role: string): NavItem[] {
   if (role === "student") return NAV.student!;
   if (role === "guardian") return NAV.guardian!;
@@ -101,6 +111,8 @@ function ThemeToggle() {
 
 export function AppShell() {
   const me = useAuth((s) => s.me)!;
+  const loc = useLocation();
+  const reduce = useReducedMotion();
   const nav = navFor(me.user.role);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -117,7 +129,7 @@ export function AppShell() {
       {nav.map((n) => (
         <NavLink key={n.to} to={n.to} end={n.end} onClick={() => setOpen(false)}
           className={({ isActive }) => cx("flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
-            isActive ? "bg-primary-soft text-primary" : "text-subtle hover:bg-muted hover:text-ink")}>
+            isActive && queryMatches(n.to, loc.search, nav) ? "bg-primary-soft text-primary-ink" : "text-subtle hover:bg-muted hover:text-ink")}>
           {n.icon}{n.label}
         </NavLink>
       ))}
@@ -162,7 +174,9 @@ export function AppShell() {
           </div>
         </header>
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <Outlet />
+          <motion.div key={loc.pathname} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease: "easeOut" }}>
+            <Outlet />
+          </motion.div>
         </main>
       </div>
     </div>

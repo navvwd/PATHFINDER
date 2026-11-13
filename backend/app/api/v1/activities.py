@@ -92,6 +92,27 @@ def list_activities(user: CurrentUser, db: DB, paging: Paging,
     return page
 
 
+@router.get("/activities/featured")
+def featured_activities(db: DB, limit: int = Query(6, ge=1, le=12)):
+    """Public showcase for the marketing site: one published platform activity per
+    domain (no institution content, no student data)."""
+    rows = db.scalars(select(Activity).where(Activity.status == "published", Activity.deleted_at.is_(None),
+                                             Activity.institution_id.is_(None))
+                      .order_by(Activity.difficulty.desc(), Activity.title)).all()
+    seen, out = set(), []
+    for a in rows:
+        if a.domain_id in seen or a.difficulty < 2:
+            continue
+        seen.add(a.domain_id)
+        out.append({"id": str(a.id), "title": a.title, "domain": a.domain.name, "domain_slug": a.domain.slug,
+                    "category": a.category, "difficulty": a.difficulty, "estimated_minutes": a.estimated_minutes,
+                    "min_age": a.min_age, "max_age": a.max_age,
+                    "skills": a.domain.skill_categories[:2] + ([a.subdomain.name] if a.subdomain else [])})
+        if len(out) >= limit:
+            break
+    return out
+
+
 @router.get("/activities/assigned/me", response_model=list[AssignmentOut])
 def my_assignments(user: CurrentUser, db: DB, status: str | None = Query(None, max_length=20)):
     s = student_for_user(db, user)

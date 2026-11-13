@@ -8,7 +8,6 @@
   --color-surface: var(--pf-surface);
   --color-muted: var(--pf-surface-muted);
   --color-line: var(--pf-border);
-  --color-ink: var(--pf-text);
   --color-subtle: var(--pf-text-muted);
   --color-primary: var(--pf-primary);
   --color-primary-hover: var(--pf-primary-hover);
@@ -22,12 +21,13 @@
   --color-danger: var(--pf-danger);
   --color-danger-soft: var(--pf-danger-soft);
   --color-info: var(--pf-info);
-  --color-lime: var(--pf-lime);
-  --color-lime-hover: var(--pf-lime-hover);
-  --color-lime-ink: var(--pf-lime-ink);
-  --color-navy: var(--pf-navy);
+  --color-primary-ink: var(--pf-primary-ink);
+  --color-ink: var(--pf-text);
+  --color-inverse: var(--pf-ink);
+  --color-on-inverse: var(--pf-ink-text);
+  --color-dark: var(--pf-dark);
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Inter Tight", "Inter", sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
   --font-junior: "Nunito", "Inter", sans-serif;
   --shadow-card: var(--pf-shadow);
@@ -42,7 +42,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 [data-experience="junior"] { font-family: var(--font-junior); }
-h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.03em; }
+.num { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
 .eyebrow { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; }
 [data-experience="junior"] h1, [data-experience="junior"] h2, [data-experience="junior"] h3 { font-family: var(--font-junior); }
 

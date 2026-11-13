@@ -39,7 +39,7 @@ export function Assessments() {
       <QueryState q={history} isEmpty={(h) => !h.length} empty={<EmptyState title="No attempts yet" />}>
         {(h) => (
           <Table rows={h} rowKey={(r) => r.id} columns={[
-            { key: "t", header: "Assessment", render: (r) => <Link className="text-primary hover:underline" to={`/app/assessments/attempts/${r.id}`}>{r.assessment_title}</Link> },
+            { key: "t", header: "Assessment", render: (r) => <Link className="text-primary-ink hover:underline" to={`/app/assessments/attempts/${r.id}`}>{r.assessment_title}</Link> },
             { key: "n", header: "Attempt", render: (r) => `#${r.attempt_no}` },
             { key: "s", header: "Status", render: (r) => <Badge tone={r.status === "evaluated" ? "success" : "warning"}>{titleCase(r.status)}</Badge> },
             { key: "sc", header: "Score", render: (r) => (r.normalized_score != null ? `${r.normalized_score.toFixed(0)}%` : "-") },
@@ -104,7 +104,7 @@ export function TakeAssessment() {
             </Card>
             <div className="mt-4 flex items-center justify-between">
               <Button variant="secondary" disabled={i === 0} onClick={() => setI(i - 1)}>Previous</Button>
-              <div className="hidden gap-1 sm:flex">{att.questions.map((x, k) => <button key={x.id} aria-label={`Question ${k + 1}`} onClick={() => setI(k)} className={cx("size-7 rounded-lg text-xs", k === i ? "bg-primary text-on-primary" : answers[x.id] !== undefined ? "bg-primary-soft text-primary" : "bg-muted")}>{k + 1}</button>)}</div>
+              <div className="hidden gap-1 sm:flex">{att.questions.map((x, k) => <button key={x.id} aria-label={`Question ${k + 1}`} onClick={() => setI(k)} className={cx("size-7 rounded-lg text-xs", k === i ? "bg-primary text-on-primary" : answers[x.id] !== undefined ? "bg-primary-soft text-primary-ink" : "bg-muted")}>{k + 1}</button>)}</div>
               {i < att.questions.length - 1 ? <Button onClick={() => setI(i + 1)}>Next</Button> : <Button loading={submit.isPending} onClick={() => submit.mutate()}>Submit</Button>}
             </div>
           </div>
@@ -145,7 +145,7 @@ export function AttemptResult() {
             <Card className="p-6 text-center">
               <h1 className="text-2xl font-bold">{a.assessment_title}</h1>
               {a.status === "evaluated" && a.normalized_score != null ? (
-                <><div className="mt-4 text-5xl font-extrabold text-primary">{a.normalized_score.toFixed(0)}%</div><p className="mt-1 text-sm text-subtle">{a.raw_score} / {a.max_score} points · attempt {a.attempt_no}</p></>
+                <><div className="mt-4 text-5xl font-extrabold text-primary-ink">{a.normalized_score.toFixed(0)}%</div><p className="mt-1 text-sm text-subtle">{a.raw_score} / {a.max_score} points · attempt {a.attempt_no}</p></>
               ) : a.status === "pending_review" ? <p className="mt-4 text-subtle">Some answers need a mentor's review. You'll be notified when your score is ready.</p>
                 : <p className="mt-4 text-subtle">Thanks for reflecting! Reflections help your mentor understand you better.</p>}
               <p className="mt-3 text-xs text-subtle">This shows how this attempt went. It is not a measure of intelligence - practice and retries are encouraged.</p>
@@ -159,7 +159,7 @@ export function AttemptResult() {
                     <div className="mt-2 text-sm text-subtle">Your answer: {r?.answer == null ? <em>no answer</em> : String(Array.isArray(r.answer) ? r.answer.join(", ") : r.answer)}</div>
                     {review[qq.id]?.correct_answer != null && <div className="text-sm">Correct: {JSON.stringify(review[qq.id]!.correct_answer).replace(/"/g, "")}</div>}
                     {review[qq.id]?.explanation ? <div className="mt-1 text-sm text-subtle">{review[qq.id]!.explanation as string}</div> : null}
-                    {r?.feedback && <div className="mt-1 text-sm text-primary">Mentor: {r.feedback}</div>}
+                    {r?.feedback && <div className="mt-1 text-sm text-primary-ink">Mentor: {r.feedback}</div>}
                   </div>
                 );
               })}

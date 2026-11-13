@@ -23,7 +23,7 @@ export default function AssessmentScreen() {
   if (result) return (
     <View className="flex-1 items-center justify-center bg-bg p-6">
       <Text className="text-xl font-bold text-ink">Done!</Text>
-      {result.normalized_score != null ? <Text className="mt-2 text-5xl font-extrabold text-primary">{result.normalized_score.toFixed(0)}%</Text>
+      {result.normalized_score != null ? <Text className="mt-2 text-5xl font-extrabold text-primary-ink">{result.normalized_score.toFixed(0)}%</Text>
         : <Text className="mt-2 text-center text-subtle">Some answers will be reviewed by your mentor.</Text>}
       <Text className="mt-3 text-center text-xs text-subtle">This shows how this attempt went - not a measure of intelligence.</Text>
     </View>

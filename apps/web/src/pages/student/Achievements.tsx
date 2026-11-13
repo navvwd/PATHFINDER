@@ -22,7 +22,7 @@ export function Achievements() {
             <Stat label="Level" value={d.level} icon={<Star className="size-4 text-accent" />} hint={<ProgressBar value={d.xp_into_level} max={d.xp_for_next_level} label="Level progress" />} />
             <Stat label="Total XP" value={d.xp} />
             <Stat label="Current streak" value={`${d.current_streak} day${d.current_streak === 1 ? "" : "s"}`} icon={<Flame className="size-4 text-danger" />} />
-            <Stat label="Badges" value={`${d.achievements.filter((a) => a.earned).length}/${d.achievements.length}`} icon={<Award className="size-4 text-primary" />} />
+            <Stat label="Badges" value={`${d.achievements.filter((a) => a.earned).length}/${d.achievements.length}`} icon={<Award className="size-4 text-primary-ink" />} />
           </div>
           <div className="mt-6 grid gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-2"><CardHeader title="Badges" /><CardBody className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

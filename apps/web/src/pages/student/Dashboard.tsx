@@ -28,7 +28,7 @@ export function Dashboard() {
                 <h1 className={junior ? "text-3xl font-extrabold" : "text-2xl sm:text-3xl font-bold"}>{d.greeting}</h1>
                 <p className="text-subtle">{junior ? "Let's learn something awesome today!" : "Here's your learning snapshot."}</p>
               </div>
-              <div className="flex gap-2"><Link to="/app/activities"><Button variant="lime" icon={<Zap className="size-4" />}>Start an activity</Button></Link></div>
+              <div className="flex gap-2"><Link to="/app/activities"><Button variant="accent" icon={<Zap className="size-4" />}>Start an activity</Button></Link></div>
             </motion.div>
 
             {consent === "pending" && (
@@ -39,13 +39,13 @@ export function Dashboard() {
               <Stat label="Level" value={`Lv ${d.stats.level as number}`} icon={<Star className="size-4 text-accent" />}
                 hint={<ProgressBar value={d.stats.xp_into_level as number} max={d.stats.xp_for_next_level as number} label="XP to next level" />} />
               <Stat label="Learning streak" value={`${d.stats.current_streak} day${d.stats.current_streak === 1 ? "" : "s"}`} icon={<Flame className="size-4 text-danger" />} hint={`Best: ${d.stats.longest_streak} days`} />
-              <Stat label="Activities done" value={d.stats.activities_completed as number} icon={<Target className="size-4 text-primary" />} hint={`${d.stats.assessments_completed} assessments`} />
+              <Stat label="Activities done" value={d.stats.activities_completed as number} icon={<Target className="size-4 text-primary-ink" />} hint={`${d.stats.assessments_completed} assessments`} />
               <Stat label="Total XP" value={d.stats.xp as number} icon={<Trophy className="size-4 text-accent" />} hint={`${d.stats.badges} recent badges`} />
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
               <Card className="lg:col-span-2">
-                <CardHeader title="Today's activities" subtitle="Picked from your chosen domains" action={<Link to="/app/activities" className="text-sm text-primary">See all</Link>} />
+                <CardHeader title="Today's activities" subtitle="Picked from your chosen domains" action={<Link to="/app/activities" className="text-sm text-primary-ink">See all</Link>} />
                 <CardBody className="grid gap-3 sm:grid-cols-3">
                   {d.daily_activities.length === 0 && <div className="sm:col-span-3"><EmptyState title="All caught up!" body="You've tried every activity in your domains. Explore a new domain?" action={<Link to="/app/domains"><Button variant="secondary">Explore domains</Button></Link>} /></div>}
                   {d.daily_activities.map((a) => (
@@ -60,7 +60,7 @@ export function Dashboard() {
                 </CardBody>
               </Card>
               <Card>
-                <CardHeader title="Weekly goals" action={<Link to="/app/achievements" className="text-sm text-primary">Manage</Link>} />
+                <CardHeader title="Weekly goals" action={<Link to="/app/achievements" className="text-sm text-primary-ink">Manage</Link>} />
                 <CardBody className="space-y-4">
                   {d.weekly_goals.map((g) => (
                     <div key={g.id as string}>
@@ -74,11 +74,11 @@ export function Dashboard() {
 
             <div className="grid gap-6 lg:grid-cols-3">
               <Card className="lg:col-span-2">
-                <CardHeader title="Your progress" subtitle="Average score of reviewed work per week (last 8 weeks)" action={<Link to="/app/progress" className="text-sm text-primary">Details</Link>} />
+                <CardHeader title="Your progress" subtitle="Average score of reviewed work per week (last 8 weeks)" action={<Link to="/app/progress" className="text-sm text-primary-ink">Details</Link>} />
                 <CardBody>{d.progress_chart.length ? <TrendChart data={d.progress_chart as never} /> : <EmptyState title="No scores yet" body="Complete an activity or assessment to start your growth chart." />}</CardBody>
               </Card>
               <Card>
-                <CardHeader title="My domains" action={<Link to="/app/interests" className="text-sm text-primary">Edit</Link>} />
+                <CardHeader title="My domains" action={<Link to="/app/interests" className="text-sm text-primary-ink">Edit</Link>} />
                 <CardBody className="space-y-3">
                   {d.selected_domains.length === 0 && <EmptyState title="No interests yet" action={<Link to="/app/interests"><Button size="sm">Choose interests</Button></Link>} />}
                   {d.selected_domains.map((s) => (
@@ -120,7 +120,7 @@ export function Dashboard() {
                 <CardHeader title="Achievements & milestones" />
                 <CardBody className="space-y-2">
                   {d.recent_achievements.map((a) => <div key={a.title as string} className="flex items-center gap-2 text-sm"><Award className="size-4 text-accent" />{a.title as string}<span className="ml-auto text-xs text-subtle">{fmtDate(a.awarded_at as string)}</span></div>)}
-                  {d.milestones.map((m) => <Link key={m.id as string} to={`/app/roadmap/${m.roadmap_id}`} className="flex items-center gap-2 text-sm hover:text-primary"><ArrowRight className="size-4" />{m.title as string}<Badge className="ml-auto">{fmtDate(m.due_date as string, { day: "numeric", month: "short" })}</Badge></Link>)}
+                  {d.milestones.map((m) => <Link key={m.id as string} to={`/app/roadmap/${m.roadmap_id}`} className="flex items-center gap-2 text-sm hover:text-primary-ink"><ArrowRight className="size-4" />{m.title as string}<Badge className="ml-auto">{fmtDate(m.due_date as string, { day: "numeric", month: "short" })}</Badge></Link>)}
                   {d.recent_achievements.length + d.milestones.length === 0 && <p className="text-sm text-subtle">Earn badges by completing activities. Create a roadmap for milestones.</p>}
                   {d.portfolio_highlights.length > 0 && <div className="pt-2 text-xs text-subtle">Portfolio: {d.portfolio_highlights.map((p) => p.title as string).join(", ")}</div>}
                 </CardBody>

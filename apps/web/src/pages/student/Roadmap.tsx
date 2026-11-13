@@ -62,7 +62,7 @@ export function RoadmapView({ r, editable }: { r: Roadmap; editable: boolean }) 
           <span className={cx("absolute -left-[33px] top-3 flex size-5 items-center justify-center rounded-full", m.status === "done" ? "bg-success text-white" : "bg-surface border-2 border-line")}>{m.status === "done" && <CheckCircle2 className="size-4" />}</span>
           <Card className={cx("p-4", m.status !== "pending" && "opacity-70")}>
             <div className="flex flex-wrap items-start justify-between gap-2">
-              <div className="flex items-start gap-2"><span className="mt-0.5 text-primary">{kindIcon[m.kind]}</span>
+              <div className="flex items-start gap-2"><span className="mt-0.5 text-primary-ink">{kindIcon[m.kind]}</span>
                 <div><div className={cx("font-medium", m.status === "done" && "line-through")}>{m.title}</div>{m.description && <div className="text-sm text-subtle">{m.description}</div>}
                   <div className="mt-1 flex gap-2 text-xs text-subtle">Day {m.due_day} · {fmtDate(m.due_date)}{m.is_custom && <Badge>custom</Badge>}</div></div></div>
               {editable && (

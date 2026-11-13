@@ -81,7 +81,7 @@ function Appearance() {
   const opts = [["light", "Light", Sun], ["dark", "Dark", Moon], ["system", "System", Monitor]] as const;
   return (
     <Card><CardHeader title="Appearance" /><CardBody className="flex gap-2">
-      {opts.map(([k, l, I]) => <button key={k} onClick={() => setTheme(k)} aria-pressed={theme === k} className={cx("flex flex-1 items-center justify-center gap-2 rounded-xl border p-3 text-sm", theme === k ? "border-primary bg-primary-soft text-primary" : "border-line")}><I className="size-4" />{l}</button>)}
+      {opts.map(([k, l, I]) => <button key={k} onClick={() => setTheme(k)} aria-pressed={theme === k} className={cx("flex flex-1 items-center justify-center gap-2 rounded-xl border p-3 text-sm", theme === k ? "border-primary bg-primary-soft text-primary-ink" : "border-line")}><I className="size-4" />{l}</button>)}
     </CardBody></Card>
   );
 }

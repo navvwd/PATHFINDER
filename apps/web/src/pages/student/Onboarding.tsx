@@ -45,7 +45,7 @@ export function Onboarding() {
                 {s.steps.map((st) => (
                   <li key={st.key}>
                     <button disabled={st.key === "account"} onClick={() => setStep(st.key as StepKey)}
-                      className={cx("flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left text-xs", st.key === current ? "bg-primary-soft text-primary" : "text-subtle hover:bg-muted")}>
+                      className={cx("flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left text-xs", st.key === current ? "bg-primary-soft text-primary-ink" : "text-subtle hover:bg-muted")}>
                       <span className={cx("flex size-5 items-center justify-center rounded-full text-[10px]", st.completed ? "bg-success text-white" : "border border-line")}>{st.completed ? <Check className="size-3" /> : ""}</span>
                       {st.title}{!st.required && <span className="opacity-60">(opt)</span>}
                     </button>
@@ -101,7 +101,12 @@ function InterestsStep({ defaults, onDone }: { defaults: { favourite_subjects: s
   const [picked, setPicked] = useState<string[] | null>(null);
   const [subs, setSubs] = useState<string[] | null>(null);
   const [fav, setFav] = useState<string | null>(null);
-  const sel = picked ?? initialDomains ?? [];
+  // Domains picked on the public landing page are carried over (only if nothing is saved yet).
+  const [fromLanding] = useState<string[]>(() => {
+    try { return JSON.parse(sessionStorage.getItem("pf-preselected-domains") ?? "[]"); } catch { return []; }
+  });
+  const landingIds = domains.data?.filter((d) => fromLanding.includes(d.slug)).map((d) => d.id) ?? [];
+  const sel = picked ?? (initialDomains?.length ? initialDomains : landingIds.length ? landingIds : initialDomains) ?? [];
   const selSubs = subs ?? current.data?.filter((i) => i.subdomain_id).map((i) => i.subdomain_id!) ?? [];
   const favourite = fav ?? current.data?.find((i) => i.is_favourite)?.domain_id ?? null;
   const [saving, setSaving] = useState(false);
@@ -109,6 +114,7 @@ function InterestsStep({ defaults, onDone }: { defaults: { favourite_subjects: s
   const save = async () => {
     setSaving(true);
     try {
+      try { sessionStorage.removeItem("pf-preselected-domains"); } catch { /* ignore */ }
       await api.students.saveInterests({ ...form, domain_ids: sel, subdomain_ids: selSubs.filter((s) => domains.data?.some((d) => sel.includes(d.id) && d.subdomains.some((x) => x.id === s))), favourite_domain_id: favourite });
       onDone();
     } catch (e) { toast.error(e); } finally { setSaving(false); }
@@ -167,7 +173,7 @@ function Goals({ defaults, onDone }: { defaults: { skills_to_learn: string[]; ac
           {prefs.map(([k, l]) => (
             <button type="button" key={k} aria-pressed={g.learning_preferences.includes(k)}
               onClick={() => setG({ ...g, learning_preferences: g.learning_preferences.includes(k) ? g.learning_preferences.filter((x) => x !== k) : [...g.learning_preferences, k] })}
-              className={cx("rounded-xl border px-3 py-2 text-sm", g.learning_preferences.includes(k) ? "border-primary bg-primary-soft text-primary" : "border-line")}>{l}</button>
+              className={cx("rounded-xl border px-3 py-2 text-sm", g.learning_preferences.includes(k) ? "border-primary bg-primary-soft text-primary-ink" : "border-line")}>{l}</button>
           ))}
         </div>
       </Field>
@@ -186,7 +192,7 @@ function GuardianStep({ status, onDone }: { status: { guardian_invite_code: stri
         <p className="text-sm text-subtle">Because you're under 18, a parent or guardian needs to link to your account and give consent for how your data is used. Share this code with them - they enter it when they create their PathFinder account.</p>
       ) : <p className="text-sm text-subtle">You're 18 or older, so guardian linking is optional. You can still share this code if you'd like a parent to follow your progress.</p>}
       <div className="flex items-center gap-3 rounded-2xl border border-dashed border-primary bg-primary-soft/40 p-4">
-        <span className="font-mono text-2xl font-bold tracking-[0.3em] text-primary">{status.guardian_invite_code}</span>
+        <span className="font-mono text-2xl font-bold tracking-[0.3em] text-primary-ink">{status.guardian_invite_code}</span>
         <Button size="sm" variant="secondary" icon={<Copy className="size-4" />} onClick={() => { void navigator.clipboard?.writeText(status.guardian_invite_code ?? ""); setCopied(true); }}>{copied ? "Copied" : "Copy"}</Button>
       </div>
       <p className="text-xs text-subtle">Consent status: <strong className="capitalize">{status.consent_status.replace("_", " ")}</strong></p>

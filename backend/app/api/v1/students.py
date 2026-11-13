@@ -25,7 +25,6 @@ from ...schemas.student import (
 from ...services import students as svc
 from ...services.access import accessible_student_ids, ensure_student_access, student_for_user
 from ...services.audit import audit
-from ...services.auth import age_on
 
 router = APIRouter(prefix="/students", tags=["students"])
 student_only = require_permission(P.PROFILE_UPDATE_SELF, P.INTERESTS_MANAGE_SELF)

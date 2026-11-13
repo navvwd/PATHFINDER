@@ -24,3 +24,4 @@ mobile-web.log
 .mobile-export-check/
 apps/mobile/.expo/
 apps/mobile/dist/
+backend/*.seeded

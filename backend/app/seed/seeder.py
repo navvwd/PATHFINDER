@@ -299,7 +299,7 @@ def seed_demo(db: Session, now: datetime | None = None) -> dict:
         # ---- interests (preference) + evolution history ----
         start = now - timedelta(days=95)
         initial = interests if pattern != "changing_interests" else (["sports"] if idx == 4 else ["creative-arts"])
-        for k, slug in enumerate(initial):
+        for slug in initial:
             db.add(InterestHistory(student_id=s.id, domain_id=domains[slug].id, action="added", source="onboarding",
                                    new_value={"strength": 4}, created_at=start))
         if pattern == "changing_interests":

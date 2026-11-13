@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 REPO_ROOT = BACKEND_DIR.parent
@@ -38,7 +39,7 @@ class Settings(BaseSettings):
     MAX_FAILED_LOGINS: int = 5
     LOCKOUT_MINUTES: int = 15
 
-    CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8081"]
+    CORS_ORIGINS: Annotated[list[str], NoDecode] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8081"]
     COOKIE_SECURE: bool = False
 
     RATE_LIMIT_PER_MINUTE: int = 240
@@ -47,7 +48,7 @@ class Settings(BaseSettings):
 
     STORAGE_DIR: str = str(BACKEND_DIR / "storage")
     MAX_UPLOAD_MB: int = 20
-    ALLOWED_UPLOAD_TYPES: list[str] = [
+    ALLOWED_UPLOAD_TYPES: Annotated[list[str], NoDecode] = [
         "image/png", "image/jpeg", "image/webp", "image/gif",
         "video/mp4", "video/webm",
         "application/pdf", "text/plain", "text/markdown",
@@ -70,7 +71,10 @@ class Settings(BaseSettings):
     @field_validator("CORS_ORIGINS", "ALLOWED_UPLOAD_TYPES", mode="before")
     @classmethod
     def _split_csv(cls, v):
-        if isinstance(v, str) and not v.startswith("["):
+        if isinstance(v, str):
+            if v.strip().startswith("["):
+                import json
+                return json.loads(v)
             return [s.strip() for s in v.split(",") if s.strip()]
         return v
 

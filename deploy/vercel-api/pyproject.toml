@@ -1,0 +1,12 @@
+# Vercel project "pathfinder-api" (Root Directory: deploy/vercel-api).
+# Installs the backend and the scoring engine from this repository; the backend's
+# runtime dependencies come from backend/requirements.txt (single source of truth).
+[project]
+name = "pathfinder-api-vercel"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["pathfinder-backend", "pathfinder-engine"]
+
+[tool.uv.sources]
+pathfinder-backend = { path = "../../backend" }
+pathfinder-engine = { path = "../../ai-engine" }

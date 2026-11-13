@@ -1,5 +1,0 @@
-# Vercel project "pathfinder-api" (Root Directory: deploy/vercel-api).
-# The installer runs in this folder, so the local paths below resolve from here.
--r ../../backend/requirements.txt
-../../ai-engine
-../../backend

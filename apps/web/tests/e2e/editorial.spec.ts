@@ -40,10 +40,11 @@ test("phone + app", async ({ browser }) => {
   p = await c.newPage();
   await p.goto("/login");
   await p.getByLabel("Email or mobile number").fill("kabir@pathfinder.demo");
-  await p.getByLabel("Password").fill("Demo@1234");
+  await p.getByLabel("Password", { exact: true }).fill("Demo@1234");
   await p.getByRole("button", { name: "Sign in" }).click();
   await p.waitForURL(/\/app$/); await p.waitForTimeout(1500);
   await p.screenshot({ path: `${out}app-dashboard.png` });
+  await p.locator("aside details summary").click();
   await p.getByRole("link", { name: "My Skills" }).click(); await p.waitForTimeout(1500);
   await p.screenshot({ path: `${out}app-skills.png` });
   await p.getByRole("link", { name: "AI Insights" }).click();

@@ -20,8 +20,8 @@ export function PortfolioView({ p, editable }: { p: PortfolioT; editable: boolea
   return (
     <>
       <div className="mb-4 flex flex-wrap gap-2">
-        <button onClick={() => setCat("")} className={cx("rounded-full px-3 py-1 text-sm", !cat ? "bg-primary text-on-primary" : "bg-muted")}>All ({p.items.length})</button>
-        {CATS.filter((c) => p.items.some((i) => i.category === c)).map((c) => <button key={c} onClick={() => setCat(c)} className={cx("rounded-full px-3 py-1 text-sm", cat === c ? "bg-primary text-on-primary" : "bg-muted")}>{titleCase(c)}</button>)}
+        <button onClick={() => setCat("")} className={cx("rounded-full px-3 py-1 text-sm", !cat ? "bg-inverse text-on-inverse" : "bg-muted")}>All ({p.items.length})</button>
+        {CATS.filter((c) => p.items.some((i) => i.category === c)).map((c) => <button key={c} onClick={() => setCat(c)} className={cx("rounded-full px-3 py-1 text-sm", cat === c ? "bg-inverse text-on-inverse" : "bg-muted")}>{titleCase(c)}</button>)}
       </div>
       {items.length === 0 ? <EmptyState title="Nothing here yet" body="Add evaluated activities or upload your own creations." /> : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

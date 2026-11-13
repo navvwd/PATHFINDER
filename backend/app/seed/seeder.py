@@ -19,6 +19,8 @@ from sqlalchemy.orm import Session
 
 from ..core.security import hash_password
 from ..models import (
+    LiveSession,
+    SessionParticipant,
     AcademicYear,
     Achievement,
     Activity,
@@ -474,6 +476,41 @@ def seed_demo(db: Session, now: datetime | None = None) -> dict:
             sa.awarded_at = last - timedelta(days=2 + k * 6)
         compute_scores(db, s)
         generate_recommendations(db, s)
+
+    # Live sessions: 8 weekly past sessions per batch with attendance, plus upcoming ones.
+    plans = [(batch_a, mentor_u, domains["stem"], ["Build-a-bot clinic", "Sketchbook critique", "Python puzzles",
+                                                    "Design thinking lab", "Stop-motion workshop", "Circuit basics",
+                                                    "Portfolio show & tell", "Game design jam"]),
+             (batch_b, teacher_u, domains["science"], ["Kitchen chemistry", "Fitness log review", "Plant growth lab",
+                                                       "Reaction-time experiments", "Star-gazing prep", "Team drills debrief",
+                                                       "Water quality test", "Science fair planning"])]
+    for batch, host, dom, titles in plans:
+        members = list(db.scalars(select(BatchMember.student_id).where(BatchMember.batch_id == batch.id)))
+        if not members:
+            continue
+        by_id = {st.id: st for st in students}
+        for k, title in enumerate(titles):
+            when = (now - timedelta(days=7 * (len(titles) - k) - 1)).replace(hour=10, minute=30, second=0, microsecond=0)
+            ls = LiveSession(mentor_user_id=host.id, institution_id=inst.id, batch_id=batch.id, domain_id=dom.id, title=title,
+                             starts_at=when, duration_minutes=45, location="Lab 2, Main Campus", status="completed")
+            db.add(ls)
+            db.flush()
+            for sid in members:
+                st = by_id.get(sid)
+                p_attend = 0.55 if st is not None and st.current_streak == 0 else 0.9
+                r = rng.random()
+                mark = "present" if r < p_attend else ("late" if r < p_attend + 0.05 else ("excused" if r < p_attend + 0.1 else "absent"))
+                db.add(SessionParticipant(session_id=ls.id, student_id=sid, attendance=mark, marked_by=host.id, marked_at=when + timedelta(hours=1)))
+        for days, title in [(1, "Weekly mentor check-in"), (4, "Project feedback circle"), (8, "Explore a new domain")]:
+            when = (now + timedelta(days=days)).replace(hour=16, minute=0, second=0, microsecond=0)
+            ls = LiveSession(mentor_user_id=host.id, institution_id=inst.id, batch_id=batch.id, domain_id=dom.id, title=title,
+                             description="Bring one thing you made this week and one question.", starts_at=when,
+                             duration_minutes=45, meeting_url="https://meet.example.com/pathfinder-demo")
+            db.add(ls)
+            db.flush()
+            for sid in members:
+                db.add(SessionParticipant(session_id=ls.id, student_id=sid))
+    db.flush()
 
     # AI-generated example reports, clearly flagged as demonstrations
     for s in students[:5]:

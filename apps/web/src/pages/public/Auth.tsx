@@ -4,8 +4,8 @@ import {
   type GuardianRegisterInput, type LoginInput, type StudentRegisterInput,
 } from "@pathfinder/validation";
 import { friendlyError } from "@pathfinder/api-client";
-import { CheckCircle2, GraduationCap, HeartHandshake } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { BookOpen, CheckCircle2, Eye, EyeOff, Flame, GraduationCap, HeartHandshake, ListChecks } from "lucide-react";
+import { useState, type KeyboardEvent, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import { z } from "zod";
@@ -35,31 +35,76 @@ export function Login() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [err, setErr] = useState<string | null>(null);
+  const [show, setShow] = useState(false);
+  const [caps, setCaps] = useState(false);
+  const [remember, setRemember] = useState(true);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
   if (me) return <Navigate to={homeFor(me)} replace />;
   const onSubmit = async (v: LoginInput) => {
     setErr(null);
     try {
-      const m = await signIn(v.identifier, v.password);
+      const m = await signIn(v.identifier, v.password, remember);
       const next = params.get("next");
       navigate(next && next.startsWith("/") && !next.startsWith("//") ? next : homeFor(m), { replace: true });
     } catch (e) { setErr(friendlyError(e)); }
   };
+  const capsCheck = (e: KeyboardEvent<HTMLInputElement>) => setCaps(e.getModifierState?.("CapsLock") ?? false);
   return (
-    <AuthLayout title="Welcome back" subtitle="Sign in to continue your journey.">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        <FormError msg={err} />
-        <Field label="Email or mobile number" htmlFor="identifier" error={errors.identifier?.message}>
-          <Input id="identifier" autoComplete="username" {...register("identifier")} invalid={!!errors.identifier} />
-        </Field>
-        <Field label="Password" htmlFor="password" error={errors.password?.message}>
-          <Input id="password" type="password" autoComplete="current-password" {...register("password")} invalid={!!errors.password} />
-        </Field>
-        <div className="flex justify-end text-sm"><Link to="/forgot-password" className="text-primary-ink hover:underline">Forgot password?</Link></div>
-        <Button type="submit" className="w-full" size="lg" loading={isSubmitting}>Sign in</Button>
-        <p className="text-center text-sm text-subtle">New here? <Link to="/register" className="text-primary-ink hover:underline">Create an account</Link></p>
-      </form>
-    </AuthLayout>
+    <div className="grid min-h-full lg:grid-cols-[1.05fr_1fr]">
+      {/* Welcome panel - desktop only, same ink + orange language as the landing page */}
+      <aside className="relative hidden overflow-hidden bg-dark p-12 text-white lg:flex lg:flex-col">
+        <Link to="/" aria-label="PathFinder AI home" className="relative z-10"><BrandMark size="lg" tone="light" /></Link>
+        <div className="relative z-10 mt-auto max-w-md">
+          <p className="eyebrow text-[#ff9576]">Welcome back</p>
+          <h2 className="mt-4 text-5xl font-bold leading-[1.02]">Ready to pick up where you left off?</h2>
+          <ul className="mt-8 space-y-4 text-white/80">
+            {[["Your next lesson is waiting", BookOpen], ["See this week's tasks at a glance", ListChecks], ["Keep your learning streak going", Flame]].map(([t, Icon]) => {
+              const C = Icon as typeof BookOpen;
+              return <li key={t as string} className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-full bg-white/10"><C className="size-4 text-[#ff9576]" aria-hidden /></span>{t as string}</li>;
+            })}
+          </ul>
+        </div>
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-primary opacity-90 blur-[2px]" />
+        <div aria-hidden className="pointer-events-none absolute -right-10 top-40 size-40 rounded-full border border-white/15" />
+      </aside>
+
+      <main className="flex items-center justify-center px-4 py-10 sm:px-8">
+        <div className="w-full max-w-md">
+          <Link to="/" aria-label="PathFinder AI home" className="mb-8 flex justify-center lg:hidden"><BrandMark size="lg" /></Link>
+          <h1 className="text-3xl font-bold sm:text-4xl">Hi there! 👋</h1>
+          <p className="mt-2 text-subtle">Sign in to continue learning. Students, parents and mentors all sign in here.</p>
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5" noValidate>
+            <FormError msg={err} />
+            <Field label="Email or mobile number" htmlFor="identifier" error={errors.identifier?.message} hint={errors.identifier ? undefined : "Use the email or mobile number you signed up with."}>
+              <Input id="identifier" autoComplete="username" inputMode="email" autoFocus placeholder="you@example.com" className="h-12 text-base" {...register("identifier")} invalid={!!errors.identifier} />
+            </Field>
+            <Field label="Password" htmlFor="password" error={errors.password?.message} hint={caps && !errors.password ? "Caps Lock is on" : undefined}>
+              <div className="relative">
+                <Input id="password" type={show ? "text" : "password"} autoComplete="current-password" className="h-12 pr-12 text-base" onKeyUp={capsCheck}
+                  {...register("password")} invalid={!!errors.password} />
+                <button type="button" onClick={() => setShow((v) => !v)} aria-label={show ? "Hide password" : "Show password"} aria-pressed={show}
+                  className="absolute inset-y-0 right-1 my-auto grid size-10 place-items-center rounded-full text-subtle hover:bg-muted hover:text-ink">
+                  {show ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+                </button>
+              </div>
+            </Field>
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <label className="flex cursor-pointer items-center gap-2 select-none">
+                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="size-4 accent-[var(--pf-primary)]" />
+                Remember me
+              </label>
+              <Link to="/forgot-password" className="font-medium text-primary-ink hover:underline">Forgot password?</Link>
+            </div>
+            <Button type="submit" className="w-full" size="lg" loading={isSubmitting}>Sign in</Button>
+            {!remember && <p className="text-center text-xs text-subtle">On a shared computer? You'll be signed out when you close the browser.</p>}
+          </form>
+          <div className="mt-8 rounded-2xl border border-line bg-surface p-4 text-sm">
+            <p className="font-medium">New to PathFinder?</p>
+            <p className="mt-1 text-subtle">Create a free account in about two minutes. <Link to="/register" className="font-medium text-primary-ink hover:underline">Create an account</Link></p>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 

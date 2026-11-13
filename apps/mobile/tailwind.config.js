@@ -19,7 +19,7 @@ module.exports = {
         "primary-soft": "#ffece6",
         danger: "#e93822",
         "danger-soft": "#fef2f2",
-        success: "#059669",
+        success: "#15803d",
       },
     },
   },

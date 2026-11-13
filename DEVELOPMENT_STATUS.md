@@ -35,14 +35,23 @@ _Last updated: 2026-11-14_
 - Student app navigation follows the brief: My Interests, Explore Domains, Interest Discovery, Activities, Challenges, Assessments, My Skills, Growth Timeline, AI Insights, Personal Roadmap, Portfolio, Achievements (+ Notifications, Profile & Settings in the header).
 - Not done from the brief: social links (no official accounts provided - omitted rather than placeholder links), a content-moderation queue (needs a moderation data model), and photographic/3D imagery (abstract code-drawn visuals used instead).
 
+## Role experience redesign (uich.md brief)
+
+- **Brand tokens**: one palette derived from the landing page, exposed under canonical names (`--color-primary #FF4D24`, `--color-primary-hover #E93822`, `--color-secondary #171717`, `--color-accent #C72E12`, `--color-background #F7F7F5`, `--color-surface #FFFFFF`, `--color-surface-muted #EEEEEC`, `--color-text-primary #171717`, `--color-text-secondary #6B6B6B`, `--color-border #E5E5E3`, `--color-success #15803D`, `--color-warning #A16207`, `--color-danger #E93822`). Removed off-brand hues: info blue, amber accent, old domain colours (migrated in the DB), confidence colours, chart fallbacks and the free colour picker (domains now pick from brand swatches). White-on-orange selected states (contrast fail) became ink. Status is always icon + text, never colour alone. Mobile tokens aligned.
+- **Student**: friendlier login (split welcome panel, show/hide password, caps-lock hint, remember me, forgot password, inline validation). New Home (welcome, level/class, today's goal, quick actions, continue learning, tasks, next live session, week strip, streak/badges/encouragement), plus My Courses, My Tasks, Live Sessions, My Progress, Messages (students can message their mentors) and My Profile. Older pages are kept under a collapsible "Explore & grow" group; no routes were removed.
+- **Mentor**: overview led by "students who need support" (inactive 14d, reviews waiting >3d, overdue tasks, attendance <75%, disagreed suggestions) with reasons in plain words; Sessions & Attendance page (schedule for a batch or chosen students, cancel, mark attendance).
+- **Guardian**: per-child card answering "Is X progressing? Any pending tasks? Is attendance OK? What did the mentor say?", next session and latest badge; detail view adds tasks, attendance and achievements. Guardians never receive meeting links.
+- **Super admin**: dense overview (users by role, active/inactive, sign-ins, allocation gaps, content, sessions, attendance, needs-attention list, recent activity log), Roles & Permissions matrix (read from the API's enforcement rules), Mentor Allocation.
+- **Backend**: `live_sessions` and `session_participants` tables (migration `593b0cb139da`), `sessions:manage` permission; `/sessions` (role-scoped list, create, update/cancel, attendance get/put, attendance summary), `/students/courses|tasks|week`, `/mentors/me/attention`, `/admin/roles`, richer `/admin/overview` and guardian overview, `remember_me` on login (12-hour session cookie when unticked), `unallocated` filter on `/students`. Demo seed adds 8 past sessions with attendance and 3 upcoming sessions per batch.
+
 ## Test results (latest local run)
 
 | Suite | Result |
 |---|---|
 | AI engine (pytest) | 13 passed |
-| Backend (pytest, SQLite, migrated via Alembic) | 29 passed |
+| Backend (pytest, SQLite, migrated via Alembic) | 36 passed |
 | Web unit (Vitest + RTL) | 11 passed |
-| Web E2E (Playwright, live API + web) | 6 passed - student journey, mentor evaluation, parent consent/reports, admin + student blocked from admin, phone viewport, redesign flows (domain preselect -> onboarding, new student pages) |
+| Web E2E (Playwright, live API + web) | 15 passed - student journey, mentor evaluation, parent answers/consent/reports, admin + student blocked from admin, per-role navigation and cross-portal redirects, student courses/tasks/sessions, mentor attendance, phone-width (no sideways scroll) for every redesigned page of all four roles, editorial flows. Needs raised API rate limits - see `apps/web/playwright.config.ts` |
 | Mobile unit (jest-expo + RNTL) | 6 passed |
 | Mobile E2E (Playwright on Expo web, Pixel 7 viewport) | 2 passed |
 | Android JS bundle (`expo export`) | Builds (1,645 modules) |
@@ -55,7 +64,7 @@ _Last updated: 2026-11-14_
 
 ## Database status
 
-Initial migration `5dedf4a4c7f6`. Verified on SQLite (upgrade, downgrade, re-upgrade, `alembic check`).
+Migrations `5dedf4a4c7f6` (initial) and `593b0cb139da` (live sessions, attendance, brand domain colours). Verified on SQLite (upgrade, downgrade, re-upgrade, `alembic check`).
 PostgreSQL-specific types (UUID, JSONB) are configured; the PostgreSQL run is wired into CI but has **not been
 executed in this environment** (no Docker/PostgreSQL available locally).
 
@@ -74,6 +83,8 @@ development machine); CI builds them. See `infrastructure/deployment/DEPLOYMENT.
 6. **Mobile scope**: students and parents. Onboarding, interest questionnaire, roadmap editing and mentor/admin tools are web-only. Mobile UI is light-theme only. Not yet run on physical devices or native emulators (verified via Expo web + Android bundle).
 7. **Error monitoring** (e.g. Sentry) not wired; structured logs are ready for shipping.
 8. **Progress snapshots** are generated on demand, not by a scheduler.
+10. **Global rate limit is per IP** (240 requests/min). A whole classroom behind one school NAT address shares it, and the new dashboards make 5-7 requests per page. Consider keying the limit by user for authenticated requests before school rollout.
+11. **Live sessions** store a meeting link only; there is no video-provider integration, calendar invite (.ics) export or recurring-session support yet.
 9. **DPDP Act**: consent ledger, guardian consent for under-18s, export, deletion and retention purge are implemented; a legal review of notices and policy text is still required.
 
 ## Bugs found and fixed during verification

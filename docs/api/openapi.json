@@ -481,6 +481,545 @@
     }
    }
   },
+  "/api/v1/sessions": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "List Sessions",
+    "operationId": "list_sessions_api_v1_sessions_get",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "when",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "upcoming",
+        "past",
+        "all"
+       ],
+       "type": "string",
+       "default": "upcoming",
+       "title": "When"
+      }
+     },
+     {
+      "name": "student_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "uuid"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Student Id"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 200,
+       "minimum": 1,
+       "default": 30,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Create Session",
+    "operationId": "create_session_api_v1_sessions_post",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SessionIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/sessions/{session_id}": {
+   "patch": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Update Session",
+    "operationId": "update_session_api_v1_sessions__session_id__patch",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SessionUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/sessions/{session_id}/attendance": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Get Attendance",
+    "operationId": "get_attendance_api_v1_sessions__session_id__attendance_get",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "put": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Mark Attendance",
+    "operationId": "mark_attendance_api_v1_sessions__session_id__attendance_put",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AttendanceIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/sessions/attendance-summary": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Attendance",
+    "operationId": "attendance_api_v1_sessions_attendance_summary_get",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "student_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "uuid"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Student Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/students/courses": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Courses",
+    "operationId": "courses_api_v1_students_courses_get",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "student_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "uuid"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Student Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/students/tasks": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Tasks",
+    "operationId": "tasks_api_v1_students_tasks_get",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "student_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "uuid"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Student Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/students/week": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Week",
+    "operationId": "week_api_v1_students_week_get",
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "student_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "uuid"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Student Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/mentors/me/attention": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Attention",
+    "operationId": "attention_api_v1_mentors_me_attention_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ]
+   }
+  },
+  "/api/v1/admin/roles": {
+   "get": {
+    "tags": [
+     "experience"
+    ],
+    "summary": "Role Matrix",
+    "description": "Read-only role -> permission matrix. Permissions are defined in code and\nenforced by the API; role changes per user are made in User Management.",
+    "operationId": "role_matrix_api_v1_admin_roles_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "HTTPBearer": []
+     }
+    ]
+   }
+  },
   "/api/v1/students": {
    "get": {
     "tags": [
@@ -526,6 +1065,16 @@
         }
        ],
        "title": "Institution Id"
+      }
+     },
+     {
+      "name": "unallocated",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Unallocated"
       }
      },
      {
@@ -2088,6 +2637,50 @@
         "schema": {
          "$ref": "#/components/schemas/ActivityOut"
         }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/activities/featured": {
+   "get": {
+    "tags": [
+     "activities"
+    ],
+    "summary": "Featured Activities",
+    "description": "Public showcase for the marketing site: one published platform activity per\ndomain (no institution content, no student data).",
+    "operationId": "featured_activities_api_v1_activities_featured_get",
+    "parameters": [
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 12,
+       "minimum": 1,
+       "default": 6,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
        }
       }
      },
@@ -6927,10 +7520,17 @@
      {
       "name": "student_id",
       "in": "query",
-      "required": true,
+      "required": false,
       "schema": {
-       "type": "string",
-       "format": "uuid",
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "uuid"
+        },
+        {
+         "type": "null"
+        }
+       ],
        "title": "Student Id"
       }
      }
@@ -7023,10 +7623,17 @@
      {
       "name": "student_id",
       "in": "query",
-      "required": true,
+      "required": false,
       "schema": {
-       "type": "string",
-       "format": "uuid",
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "uuid"
+        },
+        {
+         "type": "null"
+        }
+       ],
        "title": "Student Id"
       }
      }
@@ -8341,6 +8948,46 @@
         "schema": {
          "$ref": "#/components/schemas/ReportOut"
         }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/contact": {
+   "post": {
+    "tags": [
+     "admin"
+    ],
+    "summary": "Contact",
+    "description": "Public contact form. Delivered to platform administrators as notifications\n(an email/helpdesk integration can subscribe to the same audit event).",
+    "operationId": "contact_api_v1_contact_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ContactIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
        }
       }
      },
@@ -11162,6 +11809,50 @@
     ],
     "title": "AttemptOut"
    },
+   "AttendanceIn": {
+    "properties": {
+     "records": {
+      "items": {
+       "$ref": "#/components/schemas/AttendanceRecord"
+      },
+      "type": "array",
+      "maxItems": 500,
+      "minItems": 1,
+      "title": "Records"
+     }
+    },
+    "type": "object",
+    "required": [
+     "records"
+    ],
+    "title": "AttendanceIn"
+   },
+   "AttendanceRecord": {
+    "properties": {
+     "student_id": {
+      "type": "string",
+      "format": "uuid",
+      "title": "Student Id"
+     },
+     "attendance": {
+      "type": "string",
+      "enum": [
+       "pending",
+       "present",
+       "late",
+       "absent",
+       "excused"
+      ],
+      "title": "Attendance"
+     }
+    },
+    "type": "object",
+    "required": [
+     "student_id",
+     "attendance"
+    ],
+    "title": "AttendanceRecord"
+   },
    "BatchIn": {
     "properties": {
      "name": {
@@ -11468,6 +12159,40 @@
      "granted"
     ],
     "title": "ConsentIn"
+   },
+   "ContactIn": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "maxLength": 120,
+      "minLength": 2,
+      "title": "Name"
+     },
+     "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email"
+     },
+     "topic": {
+      "type": "string",
+      "pattern": "^(general|school|parent|mentor|privacy|support)$",
+      "title": "Topic"
+     },
+     "message": {
+      "type": "string",
+      "maxLength": 3000,
+      "minLength": 10,
+      "title": "Message"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name",
+     "email",
+     "topic",
+     "message"
+    ],
+    "title": "ContactIn"
    },
    "DashboardOut": {
     "properties": {
@@ -13042,6 +13767,11 @@
       ],
       "title": "Client",
       "default": "web"
+     },
+     "remember_me": {
+      "type": "boolean",
+      "title": "Remember Me",
+      "default": true
      }
     },
     "type": "object",
@@ -16071,6 +16801,105 @@
     ],
     "title": "ScoringConfigOut"
    },
+   "SessionIn": {
+    "properties": {
+     "title": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 3,
+      "title": "Title"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 2000
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Description"
+     },
+     "starts_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Starts At"
+     },
+     "duration_minutes": {
+      "type": "integer",
+      "maximum": 480.0,
+      "minimum": 10.0,
+      "title": "Duration Minutes",
+      "default": 45
+     },
+     "meeting_url": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 2083,
+        "minLength": 1,
+        "format": "uri"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Meeting Url"
+     },
+     "location": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Location"
+     },
+     "domain_id": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "uuid"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Domain Id"
+     },
+     "batch_id": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "uuid"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Batch Id"
+     },
+     "student_ids": {
+      "items": {
+       "type": "string",
+       "format": "uuid"
+      },
+      "type": "array",
+      "maxItems": 500,
+      "title": "Student Ids"
+     }
+    },
+    "type": "object",
+    "required": [
+     "title",
+     "starts_at"
+    ],
+    "title": "SessionIn"
+   },
    "SessionOut": {
     "properties": {
      "id": {
@@ -16138,6 +16967,104 @@
      "expires_at"
     ],
     "title": "SessionOut"
+   },
+   "SessionUpdate": {
+    "properties": {
+     "title": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200,
+        "minLength": 3
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 2000
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Description"
+     },
+     "starts_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Starts At"
+     },
+     "duration_minutes": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 480.0,
+        "minimum": 10.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration Minutes"
+     },
+     "meeting_url": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 2083,
+        "minLength": 1,
+        "format": "uri"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Meeting Url"
+     },
+     "location": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Location"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "scheduled",
+         "cancelled",
+         "completed"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     }
+    },
+    "type": "object",
+    "title": "SessionUpdate"
    },
    "SettingIn": {
     "properties": {

@@ -34,15 +34,16 @@ auth_limit = rate_limit("auth", settings.AUTH_RATE_LIMIT_PER_MINUTE)
 refresh_limit = rate_limit("refresh", settings.AUTH_RATE_LIMIT_PER_MINUTE * 6)
 
 
-def _set_cookie(resp: Response, token: str) -> None:
+def _set_cookie(resp: Response, token: str, remember: bool = True) -> None:
     # httpOnly + SameSite=Strict + path-scoped: JS can't read it and cross-site requests can't send it (CSRF).
+    # Without "remember me" it is a browser-session cookie (no max_age) backed by a 12h server session.
     resp.set_cookie(COOKIE, token, httponly=True, secure=settings.COOKIE_SECURE, samesite="strict",
-                    max_age=settings.REFRESH_TOKEN_DAYS * 86400, path=f"{settings.API_PREFIX}/auth")
+                    max_age=settings.REFRESH_TOKEN_DAYS * 86400 if remember else None, path=f"{settings.API_PREFIX}/auth")
 
 
-def _tokens(resp: Response, client: str, access: str, expires_in: int, refresh: str) -> TokenPair:
+def _tokens(resp: Response, client: str, access: str, expires_in: int, refresh: str, remember: bool = True) -> TokenPair:
     if client == "web":
-        _set_cookie(resp, refresh)
+        _set_cookie(resp, refresh, remember)
         return TokenPair(access_token=access, expires_in=expires_in)
     return TokenPair(access_token=access, expires_in=expires_in, refresh_token=refresh)
 
@@ -66,9 +67,9 @@ def register_guardian(data: GuardianRegister, request: Request, response: Respon
 @router.post("/login", response_model=TokenPair, dependencies=[Depends(auth_limit)])
 def login(data: LoginRequest, request: Request, response: Response, db: DB):
     user = svc.authenticate(db, data.identifier, data.password, request)
-    access, exp, refresh = svc.issue_tokens(db, user, data.client, request)
+    access, exp, refresh = svc.issue_tokens(db, user, data.client, request, data.remember_me)
     db.commit()
-    return _tokens(response, data.client, access, exp, refresh)
+    return _tokens(response, data.client, access, exp, refresh, data.remember_me)
 
 
 @router.post("/refresh", response_model=TokenPair, dependencies=[Depends(refresh_limit)])
@@ -80,9 +81,9 @@ def refresh(request: Request, response: Response, db: DB, data: RefreshRequest |
     if client == "web" and request.headers.get("x-requested-with") != "pathfinder":
         # Cookie-based refresh requires a custom header that cross-site forms cannot set.
         raise Unauthorized("Missing anti-CSRF header", code="csrf")
-    _, access, exp, new_refresh = svc.rotate_refresh(db, token, request)
+    _, access, exp, new_refresh, remember = svc.rotate_refresh(db, token, request)
     db.commit()
-    return _tokens(response, client, access, exp, new_refresh)
+    return _tokens(response, client, access, exp, new_refresh, remember)
 
 
 @router.post("/logout", response_model=Message)

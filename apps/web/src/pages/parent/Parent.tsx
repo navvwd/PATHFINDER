@@ -1,30 +1,117 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronRight, FileText, HeartHandshake, MessageSquare, Plus, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Award, CalendarCheck, CheckCircle2, FileText, HeartHandshake, Info, ListChecks, MessageSquare, MessageSquareQuote, Plus, ShieldCheck, TrendingUp, Video } from "lucide-react";
 import { useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 import { ProgressPanel } from "../student/Progress";
 import { PortfolioView } from "../student/Portfolio";
-import { AiLabel, Avatar, Badge, Button, Card, CardBody, CardHeader, EmptyState, Field, Input, Modal, PageHeader, QueryState, Select, Tabs, useToast } from "@/components/ui";
+import { AiLabel, Avatar, Badge, Button, Card, CardBody, CardHeader, cx, EmptyState, Field, Input, Modal, PageHeader, QueryState, Select, Tabs, useToast } from "@/components/ui";
 import { api } from "@/lib/auth";
 import { fmtDate, fmtDateTime, relTime, titleCase } from "@/lib/format";
+
+type Overview = Awaited<ReturnType<typeof api.guardians.overview>>;
+
+/** The four questions parents ask first, answered in plain language with an icon + label (never colour alone). */
+function answers(o: Overview) {
+  const name = o.student.full_name.split(" ")[0];
+  const trend = o.progress.overall.trend_label;
+  const evidence = o.progress.overall.evidence_count;
+  const progressing = evidence < 3 ? { state: "info", head: "Too early to tell", body: `${name} has ${evidence} reviewed piece${evidence === 1 ? "" : "s"} of work so far.` }
+    : trend === "improving" ? { state: "good", head: "Yes, improving", body: "Scores on repeated activities are going up." }
+    : trend === "declining" ? { state: "watch", head: "Needs a little support", body: "Recent scores dipped - a chat with the mentor can help." }
+    : { state: "good", head: "Steady progress", body: "Keeping a consistent level of work." };
+  const t = o.tasks;
+  const tasks = t.overdue ? { state: "watch", head: `${t.overdue} overdue`, body: `${t.pending} task${t.pending === 1 ? "" : "s"} still to do.` }
+    : t.pending ? { state: "info", head: `${t.pending} to do`, body: "Nothing overdue." }
+    : { state: "good", head: "All caught up", body: `${t.completed} task${t.completed === 1 ? "" : "s"} completed so far.` };
+  const at = o.attendance;
+  const attendance = at.rate == null ? { state: "info", head: "No sessions yet", body: "Attendance appears after the first live session." }
+    : at.rate >= 75 ? { state: "good", head: `${at.label} (${at.rate}%)`, body: `Attended ${at.attended} of ${at.sessions} sessions.` }
+    : { state: "watch", head: `Needs attention (${at.rate}%)`, body: `Missed ${at.missed} of ${at.sessions} sessions.` };
+  const f = o.mentor_feedback[0];
+  const feedback = f ? { state: "info", head: `From ${f.mentor_name ?? "the mentor"}`, body: `"${f.content.length > 110 ? f.content.slice(0, 110) + "..." : f.content}"` }
+    : { state: "info", head: "No feedback yet", body: "Mentor notes shared with you will appear here." };
+  return [
+    { q: `Is ${name} progressing?`, icon: TrendingUp, ...progressing },
+    { q: "Any pending tasks?", icon: ListChecks, ...tasks },
+    { q: "Is attendance OK?", icon: CalendarCheck, ...attendance },
+    { q: "What did the mentor say?", icon: MessageSquareQuote, ...feedback },
+  ];
+}
+
+const STATE: Record<string, { icon: typeof CheckCircle2; label: string; cls: string }> = {
+  good: { icon: CheckCircle2, label: "Good", cls: "text-success" },
+  watch: { icon: AlertTriangle, label: "Worth a look", cls: "text-danger" },
+  info: { icon: Info, label: "Note", cls: "text-subtle" },
+};
+
+export function AnswerGrid({ o }: { o: Overview }) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {answers(o).map((a) => {
+        const st = STATE[a.state]!;
+        return (
+          <div key={a.q} className="rounded-2xl border border-line bg-surface p-4">
+            <div className="flex items-center gap-2 text-sm text-subtle"><a.icon className="size-4 text-primary-ink" aria-hidden />{a.q}</div>
+            <div className="mt-2 flex items-center gap-1.5 font-semibold"><st.icon className={cx("size-4 shrink-0", st.cls)} aria-label={st.label} />{a.head}</div>
+            <p className="mt-1 text-sm text-subtle">{a.body}</p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ChildSummary({ id }: { id: string }) {
+  const q = useQuery({ queryKey: ["child", id], queryFn: () => api.guardians.overview(id) });
+  return (
+    <QueryState q={q} skeleton={<Card className="h-64 skeleton" />}>
+      {(o) => {
+        const next = o.upcoming_sessions[0];
+        return (
+          <Card>
+            <div className="flex flex-col gap-4 border-b border-line p-5 sm:flex-row sm:items-center">
+              <Avatar name={o.student.full_name} size={56} />
+              <div className="flex-1">
+                <h2 className="text-xl font-bold">{o.student.full_name}</h2>
+                <p className="text-sm text-subtle">{[o.student.age_group, o.student.grade && `Grade ${o.student.grade}`, o.student.school_name].filter(Boolean).join(" · ")}</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link to={`/parent/messages?student=${id}`}><Button variant="secondary" size="sm" icon={<MessageSquare className="size-4" />}>Message mentor</Button></Link>
+                <Link to={`/parent/children/${id}`}><Button size="sm">Full details</Button></Link>
+              </div>
+            </div>
+            <CardBody className="space-y-4">
+              <AnswerGrid o={o} />
+              <div className="grid gap-3 text-sm md:grid-cols-2">
+                <div className="flex items-center gap-3 rounded-xl bg-muted p-3"><Video className="size-4 shrink-0 text-primary-ink" aria-hidden />
+                  {next ? <span>Next session: <strong>{next.title}</strong>, {new Date(next.starts_at).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}</span> : <span className="text-subtle">No upcoming sessions</span>}</div>
+                <div className="flex items-center gap-3 rounded-xl bg-muted p-3"><Award className="size-4 shrink-0 text-primary-ink" aria-hidden />
+                  {o.achievements[0] ? <span>Latest badge: <strong>{o.achievements[0].title}</strong> ({relTime(o.achievements[0].at)})</span> : <span className="text-subtle">No badges yet</span>}</div>
+              </div>
+            </CardBody>
+          </Card>
+        );
+      }}
+    </QueryState>
+  );
+}
 
 export function ParentHome() {
   const q = useQuery({ queryKey: ["children"], queryFn: () => api.guardians.children() });
   const [open, setOpen] = useState(false);
   return (
     <>
-      <PageHeader title="My children" subtitle="See authorised learning records, reports and mentor feedback." actions={<Button icon={<Plus className="size-4" />} onClick={() => setOpen(true)}>Link a child</Button>} />
+      <PageHeader title="My children" subtitle="A quick, plain-language view of how each child is doing. You only see records your child's school has authorised."
+        actions={<Button variant="secondary" icon={<Plus className="size-4" />} onClick={() => setOpen(true)}>Link a child</Button>} />
       <QueryState q={q} isEmpty={(d) => !d.length} empty={<EmptyState icon={<HeartHandshake className="size-6" />} title="No children linked yet" body="Ask your child for the invite code shown in their PathFinder onboarding or settings." action={<Button onClick={() => setOpen(true)}>Enter invite code</Button>} />}>
         {(kids) => (
-          <div className="grid gap-4 md:grid-cols-2">
-            {kids.map((k) => (
-              <Link key={k.id} to={`/parent/children/${k.id}`}><Card interactive className="flex items-center gap-4 p-5">
-                <Avatar name={k.full_name} size={52} />
-                <div className="flex-1"><div className="font-semibold">{k.full_name}</div><div className="text-sm text-subtle">{k.age_group} · Grade {k.grade ?? "-"} · {k.xp} XP · {k.current_streak}-day streak</div>
-                  <div className="mt-1"><Badge tone={k.consent_status === "granted" || k.consent_status === "not_required" ? "success" : "warning"}>Consent {k.consent_status.replace("_", " ")}</Badge></div></div>
-                <ChevronRight className="size-5 text-subtle" />
-              </Card></Link>
-            ))}
+          <div className="space-y-6">
+            {kids.some((k) => k.consent_status === "pending") && (
+              <Card className="flex flex-wrap items-center gap-3 border-warning/40 bg-warning-soft p-4 text-sm"><ShieldCheck className="size-5 text-warning" aria-hidden />
+                <span className="flex-1"><strong>Consent needed.</strong> Some features stay off until you review consent for {kids.filter((k) => k.consent_status === "pending").map((k) => k.full_name.split(" ")[0]).join(", ")}.</span>
+                <Link to={`/parent/children/${kids.find((k) => k.consent_status === "pending")!.id}?tab=consent`}><Button size="sm">Review consent</Button></Link></Card>
+            )}
+            {kids.map((k) => <ChildSummary key={k.id} id={k.id} />)}
           </div>
         )}
       </QueryState>
@@ -53,7 +140,8 @@ type Tab = "overview" | "progress" | "portfolio" | "reports" | "consent";
 
 export function ChildView() {
   const { id = "" } = useParams();
-  const [tab, setTab] = useState<Tab>("overview");
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState<Tab>((params.get("tab") as Tab) || "overview");
   const q = useQuery({ queryKey: ["child", id], queryFn: () => api.guardians.overview(id) });
   return (
     <QueryState q={q}>
@@ -76,10 +164,27 @@ export function ChildView() {
   );
 }
 
-function Overview({ o }: { o: Awaited<ReturnType<typeof api.guardians.overview>> }) {
+function Overview({ o }: { o: Overview }) {
   const p = o.progress.overall;
   return (
     <div className="grid gap-6 lg:grid-cols-3">
+      <div className="lg:col-span-3"><AnswerGrid o={o} /></div>
+      <Card><CardHeader title="Tasks" subtitle={`${o.tasks.completed} completed in total`} /><CardBody className="space-y-2 text-sm">
+        {o.tasks.items.length ? o.tasks.items.map((t, i) => (
+          <div key={i} className="flex items-center justify-between gap-2 rounded-xl border border-line p-2.5">
+            <span className="truncate">{t.title}</span>
+            {t.overdue ? <Badge tone="danger"><span className="inline-flex items-center gap-1"><AlertTriangle className="size-3" />Overdue</span></Badge>
+              : <span className="shrink-0 text-xs text-subtle">{t.due_at ? `Due ${fmtDate(t.due_at, { day: "numeric", month: "short" })}` : "No deadline"}</span>}
+          </div>)) : <p className="text-subtle">No pending tasks.</p>}
+      </CardBody></Card>
+      <Card><CardHeader title="Attendance & sessions" /><CardBody className="space-y-3 text-sm">
+        <p>{o.attendance.rate == null ? "No sessions attended yet." : <>Attended <strong>{o.attendance.attended}</strong> of <strong>{o.attendance.sessions}</strong> sessions (<strong>{o.attendance.rate}%</strong>) - {o.attendance.label}.</>}</p>
+        {o.upcoming_sessions.map((s) => <div key={s.id} className="rounded-xl bg-muted p-2.5"><div className="font-medium">{s.title}</div><div className="text-xs text-subtle">{new Date(s.starts_at).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}{s.mentor_name ? ` · ${s.mentor_name}` : ""}</div></div>)}
+        {!o.upcoming_sessions.length && <p className="text-subtle">No upcoming sessions.</p>}
+      </CardBody></Card>
+      <Card><CardHeader title="Achievements" /><CardBody className="space-y-2 text-sm">
+        {o.achievements.length ? o.achievements.map((a) => <div key={a.title} className="flex items-center gap-2"><Award className="size-4 text-primary-ink" aria-hidden />{a.title}<span className="ml-auto text-xs text-subtle">{fmtDate(a.at, { day: "numeric", month: "short" })}</span></div>) : <p className="text-subtle">No badges yet.</p>}
+      </CardBody></Card>
       <Card><CardHeader title="Chosen interests" subtitle="Your child picked these" /><CardBody className="flex flex-wrap gap-2">{o.interests.map((i) => <Badge key={i.domain_id} tone="primary">{i.domain_name}{i.is_favourite ? " ★" : ""}</Badge>)}{!o.interests.length && <span className="text-sm text-subtle">None yet</span>}</CardBody></Card>
       <Card><CardHeader title="Growth at a glance" /><CardBody className="space-y-1 text-sm">
         <p>Reviewed pieces of work: <strong>{p.evidence_count}</strong></p>

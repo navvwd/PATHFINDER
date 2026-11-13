@@ -38,7 +38,7 @@ function StudentHome() {
             <Text className="text-lg font-semibold text-ink">Weekly goals</Text>
             {d.weekly_goals.map((g) => (
               <Card key={g.id as string}><View className="mb-2 flex-row justify-between"><Text className="text-ink">{g.title as string}</Text><Text className="text-subtle">{g.current as number}/{g.target as number}</Text></View>
-                <Bar value={((g.current as number) / (g.target as number)) * 100} color={g.status === "completed" ? "#059669" : undefined} /></Card>
+                <Bar value={((g.current as number) / (g.target as number)) * 100} color={g.status === "completed" ? "#15803d" : undefined} /></Card>
             ))}
             {d.recommendations.length > 0 && <>
               <Text className="text-lg font-semibold text-ink">Suggested for you</Text>

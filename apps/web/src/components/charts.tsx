@@ -28,7 +28,7 @@ export function TrendChart({ data, height = 240 }: { data: TimelinePoint[] | Arr
 }
 
 export function DomainBars({ scores, height = 260 }: { scores: DomainScore[]; height?: number }) {
-  const rows = scores.map((s) => ({ name: (s.domain_name ?? "").split(" ")[0], skill: s.skill_score ?? 0, interest: s.interest_score ?? 0, color: s.domain_color ?? "#6366f1", measured: s.skill_score !== null }));
+  const rows = scores.map((s) => ({ name: (s.domain_name ?? "").split(" ")[0], skill: s.skill_score ?? 0, interest: s.interest_score ?? 0, measured: s.skill_score !== null }));
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={rows} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
@@ -36,10 +36,10 @@ export function DomainBars({ scores, height = 260 }: { scores: DomainScore[]; he
         <XAxis dataKey="name" tick={axis} tickLine={false} interval={0} />
         <YAxis domain={[0, 100]} tick={axis} tickLine={false} />
         <Tooltip contentStyle={tooltipStyle} formatter={(v: number, n: string) => [v ? v.toFixed(0) : "not yet measured", n]} />
-        <Legend wrapperStyle={{ fontSize: 12 }} payload={[{ value: "Interest (your choice)", type: "square", color: "var(--pf-accent)" }, { value: "Demonstrated skill", type: "square", color: "var(--pf-primary)" }]} />
-        <Bar dataKey="interest" name="Interest (your choice)" fill="var(--pf-accent)" radius={[6, 6, 0, 0]} />
+        <Legend wrapperStyle={{ fontSize: 12 }} payload={[{ value: "Interest (your choice)", type: "square", color: "var(--pf-text-muted)" }, { value: "Demonstrated skill", type: "square", color: "var(--pf-primary)" }]} />
+        <Bar dataKey="interest" name="Interest (your choice)" fill="var(--pf-text-muted)" fillOpacity={0.35} radius={[6, 6, 0, 0]} />
         <Bar dataKey="skill" name="Demonstrated skill" radius={[6, 6, 0, 0]}>
-          {rows.map((r) => <Cell key={r.name} fill={r.color} fillOpacity={r.measured ? 1 : 0.15} />)}
+          {rows.map((r) => <Cell key={r.name} fill="var(--pf-primary)" fillOpacity={r.measured ? 1 : 0.15} />)}
         </Bar>
       </BarChart>
     </ResponsiveContainer>
@@ -54,7 +54,7 @@ export function DimensionRadar({ score, height = 260 }: { score: DomainScore; he
         <PolarGrid stroke="var(--pf-border)" />
         <PolarAngleAxis dataKey="dim" tick={{ fontSize: 11, fill: "var(--pf-text-muted)" }} />
         <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-        <Radar dataKey="value" stroke={score.domain_color ?? "var(--pf-primary)"} fill={score.domain_color ?? "var(--pf-primary)"} fillOpacity={0.25} />
+        <Radar dataKey="value" stroke="var(--pf-primary)" fill="var(--pf-primary)" fillOpacity={0.2} />
         <Tooltip contentStyle={tooltipStyle} />
       </RadarChart>
     </ResponsiveContainer>

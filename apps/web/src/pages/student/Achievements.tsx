@@ -27,7 +27,7 @@ export function Achievements() {
           <div className="mt-6 grid gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-2"><CardHeader title="Badges" /><CardBody className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {d.achievements.map((a) => (
-                <div key={a.id} className={cx("rounded-2xl border p-4", a.earned ? "border-accent/50 bg-warning-soft/40" : "border-line opacity-60")}>
+                <div key={a.id} className={cx("rounded-2xl border p-4", a.earned ? "border-primary/40 bg-primary-soft/50" : "border-line opacity-60")}>
                   <div className="flex items-center gap-2">{a.earned ? <Award className="size-5 text-accent" /> : <Lock className="size-5 text-subtle" />}<span className="font-semibold">{a.title}</span></div>
                   <p className="mt-1 text-xs text-subtle">{a.description}</p>
                   <div className="mt-2 flex justify-between text-xs"><Badge>+{a.xp_reward} XP</Badge>{a.awarded_at && <span className="text-subtle">{fmtDate(a.awarded_at)}</span>}</div>

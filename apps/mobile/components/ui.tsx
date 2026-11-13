@@ -35,7 +35,7 @@ export function Field({ label, error, ...props }: TextInputProps & { label: stri
   return (
     <View className="mb-3">
       <Text className="mb-1 text-sm font-medium text-ink">{label}</Text>
-      <TextInput accessibilityLabel={label} placeholderTextColor="#94a3b8" className="rounded-xl border border-line bg-surface px-3 py-3 text-ink" {...props} />
+      <TextInput accessibilityLabel={label} placeholderTextColor="#6b6b6b" className="rounded-xl border border-line bg-surface px-3 py-3 text-ink" {...props} />
       {error ? <Text className="mt-1 text-sm text-danger">{error}</Text> : null}
     </View>
   );

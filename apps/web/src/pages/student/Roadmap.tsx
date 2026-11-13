@@ -40,7 +40,7 @@ export function Roadmaps() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">{HORIZONS.map(([d, l]) => <button key={d} onClick={() => setH(d)} className={cx("rounded-xl border p-3 text-left text-sm", h === d ? "border-primary bg-primary-soft" : "border-line")}><strong>{d} days</strong><div className="text-xs text-subtle">{l}</div></button>)}</div>
           <Field label="Domains">
-            <div className="flex flex-wrap gap-2">{domains.data?.map((d) => <button key={d.id} onClick={() => setPicked(picked.includes(d.id) ? picked.filter((x) => x !== d.id) : [...picked, d.id])} className={cx("rounded-full border px-3 py-1 text-sm", picked.includes(d.id) ? "border-primary bg-primary text-on-primary" : "border-line")}>{d.name}</button>)}</div>
+            <div className="flex flex-wrap gap-2">{domains.data?.map((d) => <button key={d.id} onClick={() => setPicked(picked.includes(d.id) ? picked.filter((x) => x !== d.id) : [...picked, d.id])} className={cx("rounded-full border px-3 py-1 text-sm", picked.includes(d.id) ? "border-inverse bg-inverse text-on-inverse" : "border-line")}>{d.name}</button>)}</div>
           </Field>
         </div>
       </Modal>

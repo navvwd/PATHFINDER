@@ -107,8 +107,8 @@ export class PathfinderApi {
 
   // ------------------------------------------------------------------ auth
   auth = {
-    login: async (identifier: string, password: string) => {
-      const pair = await this.request<T.TokenPair>("POST", "/auth/login", { body: { identifier, password, client: this.cfg.mode }, auth: false });
+    login: async (identifier: string, password: string, rememberMe = true) => {
+      const pair = await this.request<T.TokenPair>("POST", "/auth/login", { body: { identifier, password, client: this.cfg.mode, remember_me: rememberMe }, auth: false });
       await this.storeTokens(pair);
       return pair;
     },
@@ -312,10 +312,28 @@ export class PathfinderApi {
   };
 
   messages = {
-    list: (studentId: string) => this.get<T.MessageOut[]>("/messages", { student_id: studentId }),
-    contacts: (studentId: string) => this.get<Array<{ user_id: string; name: string; role: string }>>("/messages/contacts", { student_id: studentId }),
+    /** studentId may be omitted by a student (their own thread). */
+    list: (studentId?: string) => this.get<T.MessageOut[]>("/messages", { student_id: studentId }),
+    contacts: (studentId?: string) => this.get<Array<{ user_id: string; name: string; role: string }>>("/messages/contacts", { student_id: studentId }),
     send: (student_id: string, recipient_id: string, body: string) => this.post<T.MessageOut>("/messages", { student_id, recipient_id, body }),
   };
+
+  // ------------------------------------------------------------------ live sessions & courses
+  sessions = {
+    list: (q?: { when?: "upcoming" | "past" | "all"; student_id?: string; limit?: number }) => this.get<LiveSession[]>("/sessions", q),
+    create: (body: { title: string; description?: string; starts_at: string; duration_minutes?: number; meeting_url?: string; location?: string;
+      domain_id?: string; batch_id?: string; student_ids?: string[] }) => this.post<LiveSession>("/sessions", body),
+    update: (id: string, body: Partial<{ title: string; description: string; starts_at: string; duration_minutes: number; meeting_url: string; location: string;
+      status: "scheduled" | "cancelled" | "completed" }>) => this.patch<LiveSession>(`/sessions/${id}`, body),
+    attendance: (id: string) => this.get<SessionAttendance>(`/sessions/${id}/attendance`),
+    markAttendance: (id: string, records: Array<{ student_id: string; attendance: AttendanceMark }>) =>
+      this.put<SessionAttendance>(`/sessions/${id}/attendance`, { records }),
+    summary: (studentId?: string) => this.get<AttendanceSummary>("/sessions/attendance-summary", { student_id: studentId }),
+  };
+
+  courses = (studentId?: string) => this.get<Course[]>("/students/courses", { student_id: studentId });
+  tasks = (studentId?: string) => this.get<StudentTasks>("/students/tasks", { student_id: studentId });
+  week = (studentId?: string) => this.get<StudentWeek>("/students/week", { student_id: studentId });
 
   // ------------------------------------------------------------------ people
   guardians = {
@@ -333,6 +351,7 @@ export class PathfinderApi {
     addMembers: (batchId: string, student_ids: string[]) => this.post<Batch>(`/mentors/me/batches/${batchId}/members`, { student_ids }),
     removeMember: (batchId: string, studentId: string) => this.del<Batch>(`/mentors/me/batches/${batchId}/members/${studentId}`),
     reviewQueue: () => this.get<ReviewQueue>("/mentors/me/review-queue"),
+    attention: () => this.get<AttentionItem[]>("/mentors/me/attention"),
     feedback: (studentId: string) => this.get<T.MentorFeedback[]>(`/mentors/students/${studentId}/feedback`),
     addFeedback: (studentId: string, body: { content: string; kind: "feedback" | "observation"; domain_id?: string; visible_to_guardian?: boolean }) =>
       this.post<T.MentorFeedback>(`/mentors/students/${studentId}/feedback`, body),
@@ -388,7 +407,8 @@ export class PathfinderApi {
   };
 
   admin = {
-    overview: () => this.get<Record<string, unknown>>("/admin/overview"),
+    overview: () => this.get<AdminOverview>("/admin/overview"),
+    roles: () => this.get<{ roles: Array<{ role: string; permissions: string[] }>; permissions: string[] }>("/admin/roles"),
     auditLogs: (q?: Query) => this.get<T.Page<AuditEntry>>("/admin/audit-logs", q),
     flags: () => this.get<Array<{ key: string; enabled: boolean; description: string | null }>>("/admin/feature-flags"),
     setFlag: (key: string, enabled: boolean, description?: string | null) => this.put<{ key: string; enabled: boolean }>(`/admin/feature-flags/${key}`, { enabled, description }),
@@ -423,6 +443,41 @@ export type GuardianOverview = {
   mentors: Array<{ user_id: string; name: string }>;
   recommendations: Array<{ title: string; kind: string; reasons: string[] }>;
   consent_status: string;
+  tasks: { pending: number; overdue: number; completed: number; items: Array<{ title: string; status: string; due_at: string | null; overdue: boolean }> };
+  attendance: AttendanceSummary;
+  upcoming_sessions: LiveSession[];
+  achievements: Array<{ title: string; at: string }>;
+};
+export type AttendanceMark = "pending" | "present" | "late" | "absent" | "excused";
+export type LiveSession = { id: string; title: string; description: string | null; starts_at: string; ends_at: string; duration_minutes: number;
+  meeting_url: string | null; location: string | null; status: "scheduled" | "cancelled" | "completed"; phase: "upcoming" | "live" | "past" | "cancelled";
+  batch_id: string | null; domain_id: string | null; domain_name: string | null; mentor_user_id: string; mentor_name: string | null;
+  participants: number; attendance_marked: number; attended: number; can_join: boolean; my_attendance?: AttendanceMark | null };
+export type SessionAttendance = { session: LiveSession; records: Array<{ student_id: string; full_name: string | null; attendance: AttendanceMark; marked_at: string | null }> };
+export type AttendanceSummary = { sessions: number; attended: number; missed: number; excused: number; rate: number | null; label: string };
+export type Course = { domain_id: string; slug: string; name: string; tagline: string | null; color: string; icon: string;
+  lessons_total: number; lessons_completed: number; lessons_in_progress: number; assessments: number; percent: number;
+  next_lesson: { id: string; title: string; minutes: number; status: string } | null; recent: Array<{ id: string; title: string; at: string }> };
+export type TaskItem = { type: "activity" | "assessment"; id: string; assignment_id?: string; attempt_id?: string; title: string; domain_name: string | null;
+  minutes: number | null; status: string; due_at: string | null; overdue: boolean; due_soon: boolean };
+export type StudentTasks = {
+  counts: { pending: number; overdue: number; due_soon: number; waiting_review: number; completed_this_week: number };
+  pending: TaskItem[]; waiting_review: TaskItem[];
+  completed: Array<{ title: string | null; score_pct: number | null; domain_name: string | null; at: string }>;
+  quiz_results: Array<{ attempt_id: string; title: string; status: string; score_pct: number | null; domain_name: string | null; at: string }>;
+};
+export type FocusArea = { key: string; label: string; tip: string; value: number };
+export type StudentWeek = { days: Array<{ date: string; actions: number }>; active_days_this_week: number; actions_this_week: number; actions_last_week: number;
+  skills: Array<{ domain_name: string | null; skill_score: number; confidence_label: string; evidence_count: number }>;
+  strengths: FocusArea[]; areas_to_improve: FocusArea[] };
+export type AttentionItem = { student_id: string; full_name: string; age_group: string | null; last_active: string | null;
+  reasons: Array<{ code: "inactive" | "review_waiting" | "overdue" | "attendance" | "disagreed"; text: string }> };
+export type AdminOverview = {
+  users: Record<string, number>; institutions: { active: number; pending: number }; signups_7d: number; security_events_7d: number; ai_requests_7d: number;
+  accounts: { active: number; inactive: number; active_30d: number; never_logged_in: number; locked: number };
+  allocation: { students_without_mentor: number; mentors_without_batches: number };
+  content: { activities: number; drafts: number; assessments: number };
+  sessions: { upcoming: number; last_7d: number; attendance_rate: number | null };
 };
 
 export const friendlyError = (e: unknown): string => {

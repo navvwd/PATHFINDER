@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  Award, BarChart3, Bell, BookOpen, Bot, Briefcase, Building2, ClipboardCheck, Compass, Flag, GraduationCap,
-  History, Home, Inbox, Layers, Lightbulb, Zap, LogOut, Map, Menu, MessageSquare, Moon, Route as RouteIcon, ScrollText, Settings, Shield, Sparkles,
-  Sun, Users, X,
+  Award, BarChart3, Bell, BookOpen, Bot, Briefcase, Building2, CalendarCheck, ChevronDown, ClipboardCheck, Compass, Flag, GraduationCap,
+  History, Home, Inbox, KeyRound, Layers, Lightbulb, ListChecks, Zap, LogOut, Map, Megaphone, Menu, MessageSquare, Moon, Route as RouteIcon,
+  ScrollText, Server, Settings, Shield, Shuffle, Sparkles, Sun, TrendingUp, UserRound, Users, Video, X,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { Navigate, NavLink, Outlet, useLocation, useNavigate } from "react-router";
@@ -13,63 +13,93 @@ import { Avatar, cx, PageSkeleton } from "./ui";
 import { BrandMark } from "./brand";
 
 type NavItem = { to: string; label: string; icon: ReactNode; end?: boolean };
+type NavSection = { label?: string; items: NavItem[]; collapsible?: boolean };
 const I = (C: typeof Home) => <C className="size-[18px]" aria-hidden />;
 
-const NAV: Record<string, NavItem[]> = {
-  student: [
-    { to: "/app", label: "Dashboard", icon: I(Home), end: true },
-    { to: "/app/interests", label: "My Interests", icon: I(Sparkles), end: true },
+const STUDENT: NavSection[] = [
+  { items: [
+    { to: "/app", label: "Home", icon: I(Home), end: true },
+    { to: "/app/courses", label: "My Courses", icon: I(BookOpen) },
+    { to: "/app/tasks", label: "My Tasks", icon: I(ListChecks) },
+    { to: "/app/sessions", label: "Live Sessions", icon: I(Video) },
+    { to: "/app/progress", label: "My Progress", icon: I(TrendingUp) },
+    { to: "/app/achievements", label: "Achievements", icon: I(Award) },
+    { to: "/app/messages", label: "Messages", icon: I(MessageSquare) },
+    { to: "/app/profile", label: "My Profile", icon: I(UserRound) },
+  ] },
+  { label: "Explore & grow", collapsible: true, items: [
     { to: "/app/domains", label: "Explore Domains", icon: I(Compass) },
+    { to: "/app/interests", label: "My Interests", icon: I(Sparkles), end: true },
     { to: "/app/interests?tab=quiz", label: "Interest Discovery", icon: I(Lightbulb) },
-    { to: "/app/activities", label: "Activities", icon: I(Layers) },
-    { to: "/app/challenges", label: "Challenges", icon: I(Zap) },
+    { to: "/app/activities", label: "Activity Library", icon: I(Layers) },
     { to: "/app/assessments", label: "Assessments", icon: I(ClipboardCheck) },
+    { to: "/app/challenges", label: "Challenges", icon: I(Zap) },
     { to: "/app/skills", label: "My Skills", icon: I(BarChart3) },
     { to: "/app/timeline", label: "Growth Timeline", icon: I(History) },
     { to: "/app/insights", label: "AI Insights", icon: I(Bot) },
     { to: "/app/roadmap", label: "Personal Roadmap", icon: I(Map) },
     { to: "/app/portfolio", label: "Portfolio", icon: I(Briefcase) },
-    { to: "/app/achievements", label: "Achievements", icon: I(Award) },
-  ],
-  guardian: [
-    { to: "/parent", label: "My Children", icon: I(Users), end: true },
-    { to: "/parent/messages", label: "Messages", icon: I(MessageSquare) },
-  ],
-  mentor: [
+  ] },
+];
+
+const GUARDIAN: NavSection[] = [{ items: [
+  { to: "/parent", label: "My Children", icon: I(Users), end: true },
+  { to: "/parent/messages", label: "Messages", icon: I(MessageSquare) },
+  { to: "/notifications", label: "Notifications", icon: I(Bell) },
+] }];
+
+const MENTOR: NavSection[] = [
+  { items: [
     { to: "/mentor", label: "Overview", icon: I(Home), end: true },
-    { to: "/mentor/students", label: "Students", icon: I(GraduationCap) },
-    { to: "/mentor/reviews", label: "Review Queue", icon: I(Inbox) },
-    { to: "/mentor/batches", label: "Batches", icon: I(Users) },
-    { to: "/mentor/activities", label: "Activities", icon: I(Layers) },
-    { to: "/mentor/assessments", label: "Assessments", icon: I(ClipboardCheck) },
+    { to: "/mentor/students", label: "My Students", icon: I(GraduationCap) },
+    { to: "/mentor/sessions", label: "Sessions & Attendance", icon: I(CalendarCheck) },
+    { to: "/mentor/reviews", label: "Review & Feedback", icon: I(Inbox) },
     { to: "/mentor/messages", label: "Messages", icon: I(MessageSquare) },
-  ],
-  institution: [
+  ] },
+  { label: "Manage", items: [
+    { to: "/mentor/batches", label: "Batches", icon: I(Users) },
+    { to: "/mentor/activities", label: "Tasks & Activities", icon: I(Layers) },
+    { to: "/mentor/assessments", label: "Assessments", icon: I(ClipboardCheck) },
+  ] },
+];
+
+const INSTITUTION: NavSection[] = [
+  { items: [
     { to: "/institution", label: "Overview", icon: I(BarChart3), end: true },
     { to: "/institution/structure", label: "Campuses & Classes", icon: I(Building2) },
     { to: "/institution/people", label: "Staff & Students", icon: I(Users) },
     { to: "/institution/reports", label: "Reports", icon: I(ScrollText) },
+  ] },
+  { label: "Teaching", items: [
     { to: "/mentor/students", label: "Student Profiles", icon: I(GraduationCap) },
+    { to: "/mentor/sessions", label: "Sessions & Attendance", icon: I(CalendarCheck) },
     { to: "/mentor/activities", label: "Activities", icon: I(Layers) },
     { to: "/mentor/reviews", label: "Review Queue", icon: I(Inbox) },
-  ],
-  admin: [
-    { to: "/admin", label: "Overview", icon: I(BarChart3), end: true },
+  ] },
+];
+
+const ADMIN_CORE: NavSection[] = [
+  { items: [{ to: "/admin", label: "Overview", icon: I(BarChart3), end: true }] },
+  { label: "People", items: [
     { to: "/admin/users", label: "Users", icon: I(Users) },
+    { to: "/admin/roles", label: "Roles & Permissions", icon: I(KeyRound) },
+    { to: "/admin/allocation", label: "Mentor Allocation", icon: I(Shuffle) },
     { to: "/admin/institutions", label: "Institutions", icon: I(Building2) },
+  ] },
+  { label: "Content", items: [
     { to: "/admin/domains", label: "Domains", icon: I(Compass) },
     { to: "/mentor/activities", label: "Activities", icon: I(Layers) },
     { to: "/mentor/assessments", label: "Assessments", icon: I(ClipboardCheck) },
-    { to: "/admin/notifications", label: "Broadcast", icon: I(Bell) },
-  ],
-  super: [
-    { to: "/admin/scoring", label: "Scoring Config", icon: I(RouteIcon) },
-    { to: "/admin/ai", label: "AI Settings", icon: I(Bot) },
-    { to: "/admin/flags", label: "Feature Flags", icon: I(Flag) },
-    { to: "/admin/security", label: "Audit & Security", icon: I(Shield) },
-    { to: "/admin/system", label: "System", icon: I(BookOpen) },
-  ],
-};
+    { to: "/admin/notifications", label: "Announcements", icon: I(Megaphone) },
+  ] },
+];
+const SUPER_EXTRA: NavSection = { label: "System", items: [
+  { to: "/admin/security", label: "Activity Logs", icon: I(Shield) },
+  { to: "/admin/scoring", label: "Scoring Config", icon: I(RouteIcon) },
+  { to: "/admin/ai", label: "AI Settings", icon: I(Bot) },
+  { to: "/admin/flags", label: "Feature Flags", icon: I(Flag) },
+  { to: "/admin/system", label: "System Health", icon: I(Server) },
+] };
 
 /** Items sharing a path (e.g. /app/interests and /app/interests?tab=quiz) are told apart by their query. */
 function queryMatches(to: string, search: string, nav: NavItem[]): boolean {
@@ -79,13 +109,13 @@ function queryMatches(to: string, search: string, nav: NavItem[]): boolean {
   return !siblings.some((n) => new URLSearchParams(search).toString().includes(n.to.split("?")[1]!));
 }
 
-function navFor(role: string): NavItem[] {
-  if (role === "student") return NAV.student!;
-  if (role === "guardian") return NAV.guardian!;
-  if (role === "mentor" || role === "teacher") return NAV.mentor!;
-  if (role === "institution_admin") return NAV.institution!;
-  if (role === "super_admin") return [...NAV.admin!, ...NAV.super!];
-  return NAV.admin!;
+function navFor(role: string): NavSection[] {
+  if (role === "student") return STUDENT;
+  if (role === "guardian") return GUARDIAN;
+  if (role === "mentor" || role === "teacher") return MENTOR;
+  if (role === "institution_admin") return INSTITUTION;
+  if (role === "super_admin") return [...ADMIN_CORE, SUPER_EXTRA];
+  return ADMIN_CORE;
 }
 
 export function RequireAuth({ roles, children }: { roles?: string[]; children?: ReactNode }) {
@@ -121,21 +151,35 @@ export function AppShell() {
   const settingsPath = me.user.role === "student" ? "/app/settings" : "/settings";
   const notifPath = me.user.role === "student" ? "/app/notifications" : "/notifications";
 
+  const flat = nav.flatMap((sec) => sec.items);
+  const link = (n: NavItem) => (
+    <NavLink key={n.to} to={n.to} end={n.end} onClick={() => setOpen(false)}
+      className={({ isActive }) => cx("flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
+        isActive && queryMatches(n.to, loc.search, flat) ? "bg-primary-soft text-primary-ink" : "text-subtle hover:bg-muted hover:text-ink")}>
+      {n.icon}{n.label}
+    </NavLink>
+  );
   const sidebar = (
-    <nav aria-label="Main" className="flex h-full flex-col gap-1 p-3">
+    <nav aria-label="Main" className="flex h-full flex-col gap-1 overflow-y-auto p-3">
       <NavLink to={homeFor(me)} className="mb-4 flex items-center gap-2 px-2 py-1" onClick={() => setOpen(false)}>
         <BrandMark />
       </NavLink>
-      {nav.map((n) => (
-        <NavLink key={n.to} to={n.to} end={n.end} onClick={() => setOpen(false)}
-          className={({ isActive }) => cx("flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
-            isActive && queryMatches(n.to, loc.search, nav) ? "bg-primary-soft text-primary-ink" : "text-subtle hover:bg-muted hover:text-ink")}>
-          {n.icon}{n.label}
-        </NavLink>
+      {nav.map((sec, k) => sec.collapsible ? (
+        <details key={k} className="group mt-3" open={sec.items.some((n) => loc.pathname.startsWith(n.to.split("?")[0]!)) || undefined}>
+          <summary className="eyebrow flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-1.5 text-subtle hover:text-ink">
+            {sec.label}<ChevronDown className="size-4 transition group-open:rotate-180" aria-hidden />
+          </summary>
+          <div className="mt-1 space-y-1">{sec.items.map(link)}</div>
+        </details>
+      ) : (
+        <div key={k} className={cx("space-y-1", k > 0 && "mt-3")}>
+          {sec.label && <div className="eyebrow px-3 py-1.5 text-subtle">{sec.label}</div>}
+          {sec.items.map(link)}
+        </div>
       ))}
       <div className="mt-auto space-y-1 border-t border-line pt-3">
-        <NavLink to={settingsPath} onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-subtle hover:bg-muted hover:text-ink">
-          {I(Settings)}Profile & Settings
+        <NavLink to={settingsPath} onClick={() => setOpen(false)} className={({ isActive }) => cx("flex items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-muted hover:text-ink", isActive ? "text-ink" : "text-subtle")}>
+          {I(Settings)}Settings
         </NavLink>
         <button onClick={async () => { await signOut(); navigate("/login"); }} className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-subtle hover:bg-muted hover:text-ink">
           {I(LogOut)}Sign out
@@ -163,7 +207,7 @@ export function AppShell() {
           <ThemeToggle />
           <NavLink to={notifPath} aria-label="Notifications" className="relative rounded-xl p-2 text-subtle hover:bg-muted hover:text-ink">
             <Bell className="size-5" />
-            {!!unread.data?.count && <span className="absolute -right-0.5 -top-0.5 rounded-full bg-danger px-1.5 text-[10px] font-bold text-white">{unread.data.count}</span>}
+            {!!unread.data?.count && <span className="absolute -right-0.5 -top-0.5 rounded-full bg-primary px-1.5 text-[10px] font-bold text-[#171717]">{unread.data.count}</span>}
           </NavLink>
           <div className="flex items-center gap-2">
             <Avatar name={me.user.full_name} />

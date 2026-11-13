@@ -21,7 +21,7 @@ ROADMAP = [
 
 DOMAINS = [
     {
-        "slug": "stem", "name": "STEM & Technology", "icon": "cpu", "color": "#4f46e5",
+        "slug": "stem", "name": "STEM & Technology", "icon": "cpu", "color": "#171717",
         "tagline": "Build, code and solve problems with logic",
         "description": "Explore how technology works and how to create it - from writing your first program to "
                        "designing robots, reasoning through puzzles and using mathematics to model the world.",
@@ -32,7 +32,7 @@ DOMAINS = [
                        "Logical Reasoning", "Electronics", "Game Development"],
     },
     {
-        "slug": "creative-arts", "name": "Creative Arts & Design", "icon": "palette", "color": "#db2777",
+        "slug": "creative-arts", "name": "Creative Arts & Design", "icon": "palette", "color": "#ff4d24",
         "tagline": "Imagine, design and tell stories",
         "description": "Express ideas visually and through stories - graphic design, interfaces, animation, "
                        "photography, film and writing.",
@@ -43,7 +43,7 @@ DOMAINS = [
                        "Storytelling", "Creative Writing"],
     },
     {
-        "slug": "business", "name": "Business & Entrepreneurship", "icon": "briefcase", "color": "#d97706",
+        "slug": "business", "name": "Business & Entrepreneurship", "icon": "briefcase", "color": "#c72e12",
         "tagline": "Turn ideas into value",
         "description": "Learn how ideas become products and ventures - spotting opportunities, understanding "
                        "customers, money, marketing and strategy.",
@@ -54,7 +54,7 @@ DOMAINS = [
                        "Economics", "Product Development"],
     },
     {
-        "slug": "communication", "name": "Communication & Leadership", "icon": "megaphone", "color": "#0891b2",
+        "slug": "communication", "name": "Communication & Leadership", "icon": "megaphone", "color": "#6b6b6b",
         "tagline": "Speak up, lead and work together",
         "description": "Grow confidence in speaking, writing, debating and leading teams - the skills that help "
                        "every idea reach people.",
@@ -65,7 +65,7 @@ DOMAINS = [
                        "Collaboration", "Presentation Skills"],
     },
     {
-        "slug": "science", "name": "Science & Research", "icon": "flask-conical", "color": "#059669",
+        "slug": "science", "name": "Science & Research", "icon": "flask-conical", "color": "#ff9576",
         "tagline": "Ask questions and discover answers",
         "description": "Investigate the natural world through observation, experiments and research across "
                        "physics, chemistry, biology and environmental science.",
@@ -76,7 +76,7 @@ DOMAINS = [
                        "Scientific Research", "Observation", "Analytical Thinking"],
     },
     {
-        "slug": "sports", "name": "Sports & Physical Development", "icon": "trophy", "color": "#dc2626",
+        "slug": "sports", "name": "Sports & Physical Development", "icon": "trophy", "color": "#5c160a",
         "tagline": "Move, train and play as a team",
         "description": "Develop fitness, coordination and game intelligence through sport, training plans and "
                        "teamwork.",

@@ -26,6 +26,13 @@
   --color-inverse: var(--pf-ink);
   --color-on-inverse: var(--pf-ink-text);
   --color-dark: var(--pf-dark);
+  /* canonical brand names (see packages/design-system/src/tokens.css) */
+  --color-secondary: var(--pf-ink);
+  --color-background: var(--pf-bg);
+  --color-surface-muted: var(--pf-surface-muted);
+  --color-text-primary: var(--pf-text);
+  --color-text-secondary: var(--pf-text-muted);
+  --color-border: var(--pf-border);
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Space Grotesk", "Inter", sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;

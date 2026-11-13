@@ -6,7 +6,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import Boolean, Date, ForeignKey, Index, Integer, String, Text
+from sqlalchemy import Boolean, Date, ForeignKey, Index, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base, Timestamped, UUIDPk, utcnow
@@ -146,3 +146,33 @@ class AIUsageLog(UUIDPk, Base):
     status: Mapped[str] = mapped_column(String(20))  # ok|fallback|error|rate_limited|invalid_output
     error_code: Mapped[str | None] = mapped_column(String(60))
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+
+class LiveSession(UUIDPk, Timestamped, Base):
+    """A scheduled live (online or in-person) session run by a mentor/teacher."""
+
+    __tablename__ = "live_sessions"
+    __table_args__ = (Index("ix_live_sessions_starts", "starts_at"),)
+    mentor_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    institution_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("institutions.id", ondelete="SET NULL"), index=True)
+    batch_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("batches.id", ondelete="SET NULL"), index=True)
+    domain_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("domains.id", ondelete="SET NULL"))
+    title: Mapped[str] = mapped_column(String(200))
+    description: Mapped[str | None] = mapped_column(Text)
+    starts_at: Mapped[datetime]
+    duration_minutes: Mapped[int] = mapped_column(Integer, default=45)
+    meeting_url: Mapped[str | None] = mapped_column(String(500))
+    location: Mapped[str | None] = mapped_column(String(200))
+    status: Mapped[str] = mapped_column(String(20), default="scheduled")  # scheduled|cancelled|completed
+
+
+class SessionParticipant(UUIDPk, Timestamped, Base):
+    """Invitation + attendance record for one student in one session."""
+
+    __tablename__ = "session_participants"
+    __table_args__ = (UniqueConstraint("session_id", "student_id"),)
+    session_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("live_sessions.id", ondelete="CASCADE"), index=True)
+    student_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("students.id", ondelete="CASCADE"), index=True)
+    attendance: Mapped[str] = mapped_column(String(20), default="pending")  # pending|present|late|absent|excused
+    marked_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    marked_at: Mapped[datetime | None]

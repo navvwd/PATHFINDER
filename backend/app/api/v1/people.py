@@ -48,6 +48,7 @@ from ...services.access import (
     guardian_for_user,
     mentor_for_user,
     mentor_student_ids,
+    resolve_student,
 )
 from ...services.audit import audit
 from ...services.auth import link_guardian
@@ -126,6 +127,34 @@ def child_overview(student_id: uuid.UUID, db: DB, user: User = Depends(require_p
         "mentors": [{"user_id": str(uid), "name": n} for uid, n in mentors],
         "recommendations": [{"title": r.title, "kind": r.kind, "reasons": r.reasons} for r in recs],
         "consent_status": s.consent_status,
+        **_guardian_answers(db, s),
+    }
+
+
+def _guardian_answers(db, s: Student) -> dict:
+    """Plain facts a parent asks first: pending work, attendance, sessions, badges."""
+    from ...models import Activity, ActivityAssignment, Achievement, StudentAchievement
+    from ...services import experience as xp
+    t = utcnow()
+    pending = db.execute(select(ActivityAssignment, Activity.title).join(Activity, Activity.id == ActivityAssignment.activity_id)
+                         .where(ActivityAssignment.student_id == s.id, ActivityAssignment.status.in_(("assigned", "in_progress")))
+                         .order_by(ActivityAssignment.due_at.is_(None), ActivityAssignment.due_at)).all()
+    completed = db.scalar(select(func.count()).select_from(ActivityAssignment).where(
+        ActivityAssignment.student_id == s.id, ActivityAssignment.status == "completed")) or 0
+    badges = db.execute(select(Achievement.title, StudentAchievement.awarded_at).join(Achievement, Achievement.id == StudentAchievement.achievement_id)
+                        .where(StudentAchievement.student_id == s.id).order_by(StudentAchievement.awarded_at.desc()).limit(6)).all()
+    return {
+        "tasks": {
+            "pending": len(pending),
+            "overdue": sum(1 for a, _ in pending if a.due_at and a.due_at < t),
+            "completed": int(completed),
+            "items": [{"title": title, "status": a.status, "due_at": a.due_at.isoformat() if a.due_at else None,
+                       "overdue": bool(a.due_at and a.due_at < t)} for a, title in pending[:6]],
+        },
+        "attendance": xp.attendance_summary(db, s.id),
+        "upcoming_sessions": [{k: v for k, v in xp.session_out(db, x).items() if k != "meeting_url"}
+                              for x in xp.upcoming_sessions_for_student(db, s.id, 4)],
+        "achievements": [{"title": n, "at": at.isoformat()} for n, at in badges],
     }
 
 
@@ -385,8 +414,12 @@ def broadcast(data: BroadcastIn, request: Request, db: DB,
 # ============================ messages (parent <-> mentor) ============================
 
 def _can_message(db, sender: User, recipient: User, student: Student) -> None:
-    """Allowed pairs: a guardian of the student <-> a mentor/teacher of the student."""
+    """Allowed pairs: a guardian of the student <-> a mentor/teacher of the student,
+    and the student themself <-> their mentor/teacher. Never student <-> guardian
+    or student <-> student here (that is outside this platform's remit)."""
     def related(u: User) -> bool:
+        if u.role == Role.STUDENT:
+            return u.id == student.user_id
         if u.role == Role.GUARDIAN:
             g = db.scalar(select(Guardian).where(Guardian.user_id == u.id))
             return bool(g and db.scalar(select(StudentGuardian.id).where(
@@ -398,15 +431,15 @@ def _can_message(db, sender: User, recipient: User, student: Student) -> None:
                 u.role == Role.TEACHER and u.institution_id is not None and u.institution_id == student.institution_id)
         return False
     roles = {sender.role, recipient.role}
-    if not (Role.GUARDIAN in roles and roles & {Role.MENTOR, Role.TEACHER}):
-        raise Forbidden("Messages are available between guardians and the student's mentors")
+    if not (roles & {Role.GUARDIAN, Role.STUDENT} and roles & {Role.MENTOR, Role.TEACHER} and len(roles) == 2):
+        raise Forbidden("Messages are available between students or guardians and their mentors")
     if not (related(sender) and related(recipient)):
         raise Forbidden("Both people must be connected to this student")
 
 
 @router.get("/messages", response_model=list[MessageOut])
-def list_messages(student_id: uuid.UUID, db: DB, user: User = Depends(require_permission(P.MESSAGES_SEND))):
-    ensure_student_access(db, user, student_id)
+def list_messages(db: DB, user: User = Depends(require_permission(P.MESSAGES_SEND)), student_id: uuid.UUID | None = None):
+    student_id = resolve_student(db, user, student_id).id
     rows = db.scalars(select(Message).where(Message.student_id == student_id,
                                             or_(Message.sender_id == user.id, Message.recipient_id == user.id))
                       .order_by(Message.created_at).limit(500)).all()
@@ -435,7 +468,8 @@ def send_message(data: MessageIn, db: DB, user: User = Depends(require_permissio
         raise ValidationFailed("Message is empty")
     db.add(m)
     notify(db, recipient.id, "message", f"New message from {user.full_name}", data.body[:120],
-           f"/messages?student={s.id}")
+           {Role.STUDENT: "/app/messages", Role.GUARDIAN: "/parent/messages"}.get(recipient.role, "/mentor/messages")
+           + f"?student={s.id}")
     db.commit()
     out = MessageOut.model_validate(m)
     out.sender_name = user.full_name
@@ -443,14 +477,15 @@ def send_message(data: MessageIn, db: DB, user: User = Depends(require_permissio
 
 
 @router.get("/messages/contacts")
-def contacts(student_id: uuid.UUID, db: DB, user: User = Depends(require_permission(P.MESSAGES_SEND))):
-    s = ensure_student_access(db, user, student_id)
-    if user.role == Role.GUARDIAN:
+def contacts(db: DB, user: User = Depends(require_permission(P.MESSAGES_SEND)), student_id: uuid.UUID | None = None):
+    s = resolve_student(db, user, student_id)
+    if user.role in (Role.GUARDIAN, Role.STUDENT):
         rows = db.execute(select(User.id, User.full_name, User.role).join(Mentor, Mentor.user_id == User.id)
                           .join(Batch, Batch.mentor_id == Mentor.id).join(BatchMember, BatchMember.batch_id == Batch.id)
                           .where(BatchMember.student_id == s.id).distinct()).all()
     else:
-        rows = db.execute(select(User.id, User.full_name, User.role).join(Guardian, Guardian.user_id == User.id)
+        own = db.execute(select(User.id, User.full_name, User.role).where(User.id == s.user_id)).all()
+        rows = own + db.execute(select(User.id, User.full_name, User.role).join(Guardian, Guardian.user_id == User.id)
                           .join(StudentGuardian, and_(StudentGuardian.guardian_id == Guardian.id,
                                                       StudentGuardian.student_id == s.id, StudentGuardian.status == "active"))).all()
     return [{"user_id": str(i), "name": n, "role": r} for i, n, r in rows]

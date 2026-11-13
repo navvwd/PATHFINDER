@@ -1,5 +1,22 @@
-/* PathFinder design tokens - editorial neutrals with an orange-red accent.
-   Light is default; dark via prefers-color-scheme or [data-theme]. */
+/* PathFinder design tokens - editorial neutrals with an orange-red accent,
+   derived from the public landing page. Light is default; dark via
+   prefers-color-scheme or [data-theme].
+
+   Canonical brand names (exposed to Tailwind in apps/web/src/index.css):
+     --color-primary         #ff4d24  orange-red: CTAs, active nav, key progress
+     --color-primary-hover   #e93822
+     --color-secondary       #171717  ink: primary buttons, headings, inverse panels
+     --color-accent          #c72e12  text-safe orange for links/labels (AA on light)
+     --color-background      #f7f7f5
+     --color-surface         #ffffff
+     --color-surface-muted   #eeeeec
+     --color-text-primary    #171717
+     --color-text-secondary  #6b6b6b
+     --color-border          #e5e5e3
+     --color-success         #15803d  (status only, always paired with a label/icon)
+     --color-warning         #a16207  (status only)
+     --color-danger          #e93822  (errors/destructive; the brand red-orange)
+   No other hues are used in the authenticated app. */
 :root {
   --pf-bg: #f7f7f5;
   --pf-surface: #ffffff;
@@ -23,7 +40,8 @@
   --pf-warning-soft: #fef9e7;
   --pf-danger: #e93822;
   --pf-danger-soft: #fdecea;
-  --pf-info: #2563eb;
+  /* "info" is neutral ink, not a new hue */
+  --pf-info: #3f3f3d;
   --pf-ring: rgba(255, 77, 36, 0.35);
   --pf-shadow: 0 1px 2px rgba(23, 23, 23, 0.04), 0 8px 24px rgba(23, 23, 23, 0.06);
   --pf-radius: 20px;
@@ -47,6 +65,7 @@
   --pf-warning: #facc15;
   --pf-warning-soft: #2a2410;
   --pf-danger-soft: #3a1512;
+  --pf-info: #d4d4d0;
   --pf-ring: rgba(255, 90, 51, 0.45);
   --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
@@ -70,6 +89,7 @@
     --pf-warning: #facc15;
     --pf-warning-soft: #2a2410;
     --pf-danger-soft: #3a1512;
+    --pf-info: #d4d4d0;
     --pf-ring: rgba(255, 90, 51, 0.45);
     --pf-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
     color-scheme: dark;

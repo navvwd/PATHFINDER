@@ -2,10 +2,16 @@ import { expect, test, type Page } from "@playwright/test";
 
 const PW = "Demo@1234";
 
+/** Expand the student's collapsible "Explore & grow" nav group if it is closed. */
+async function openMore(page: Page) {
+  const more = page.locator("aside details", { hasText: "Explore & grow" });
+  if (await more.count() && (await more.getAttribute("open")) === null) await more.locator("summary").click();
+}
+
 async function login(page: Page, email: string, password = PW) {
   await page.goto("/login");
   await page.getByLabel("Email or mobile number").fill(email);
-  await page.getByLabel("Password").fill(password);
+  await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
 }
 
@@ -36,6 +42,7 @@ test("new student registers, onboards, explores, submits and sees progress", asy
   await expect(page.getByRole("heading", { name: /Good (morning|afternoon|evening), Playwright/ })).toBeVisible();
 
   // explore all six domains
+  await openMore(page);
   await page.getByRole("link", { name: "Explore Domains" }).click();
   await expect(page.locator("a[href^='/app/domains/']")).toHaveCount(6);
   await page.getByRole("link", { name: /Science & Research/ }).click();
@@ -66,11 +73,15 @@ test("new student registers, onboards, explores, submits and sees progress", asy
 
   // progress + recommendations + portfolio render with real data
   await page.goto("/app/progress");
+  await expect(page.getByRole("heading", { name: "Weekly activity" })).toBeVisible();
+  await page.getByRole("button", { name: "Show detailed analytics" }).click();
   await expect(page.getByText("Interest vs demonstrated skill")).toBeVisible();
+  await openMore(page);
   await page.getByRole("link", { name: "AI Insights" }).click();
   await page.getByRole("tab", { name: "Recommendations" }).click();
   await page.getByRole("button", { name: "Generate now" }).click();
   await expect(page.getByText(/not a test of intelligence/)).toBeVisible();
+  await openMore(page);
   await page.getByRole("link", { name: "Portfolio" }).click();
   await expect(page.getByText(/Private by default/)).toBeVisible();
 });
@@ -78,7 +89,7 @@ test("new student registers, onboards, explores, submits and sees progress", asy
 test("mentor evaluates a submission with a rubric", async ({ page }) => {
   await login(page, "mentor@pathfinder.demo");
   await expect(page).toHaveURL(/\/mentor/);
-  await page.getByRole("link", { name: "Review Queue" }).click();
+  await page.getByRole("link", { name: "Review & Feedback" }).click();
   const first = page.locator("a[href^='/mentor/reviews/']").first();
   if (await first.count()) {
     await first.click();
@@ -87,7 +98,7 @@ test("mentor evaluates a submission with a rubric", async ({ page }) => {
     await page.getByRole("button", { name: "Submit evaluation" }).click();
     await expect(page).toHaveURL(/\/mentor\/reviews$/);
   }
-  await page.getByRole("link", { name: "Students" }).click();
+  await page.getByRole("link", { name: "My Students" }).click();
   await page.getByRole("row", { name: /Aarav Mehta/ }).click();
   await expect(page.getByText("Domain-wise progress")).toBeVisible();
   await page.getByRole("tab", { name: "Feedback & insights" }).click();
@@ -102,7 +113,9 @@ test("parent monitors only their linked child and manages consent", async ({ pag
   await expect(page).toHaveURL(/\/parent/);
   await expect(page.getByText("Aarav Mehta")).toBeVisible();
   await expect(page.getByText("Diya Nair")).toHaveCount(0);
-  await page.getByText("Aarav Mehta").click();
+  await expect(page.getByText("Is Aarav progressing?")).toBeVisible();
+  await expect(page.getByText("Is attendance OK?").first()).toBeVisible();
+  await page.locator("a[href*='/parent/children/']", { hasText: "Full details" }).first().click();
   await expect(page.getByText("Chosen interests")).toBeVisible();
   await page.getByRole("tab", { name: "Consent & privacy" }).click();
   await expect(page.getByText(/Use AI to generate guidance/)).toBeVisible();
@@ -129,4 +142,48 @@ test("admin manages users, institutions and domains; students are blocked from a
   await login(page, "aarav@pathfinder.demo");
   await page.goto("/admin/users");
   await expect(page).not.toHaveURL(/\/admin/);
+});
+
+test("each role gets its own navigation and cannot open other portals", async ({ page }) => {
+  const cases: Array<[string, RegExp, string[], string[]]> = [
+    ["aarav", /\/app$/, ["Home", "My Courses", "My Tasks", "Live Sessions", "My Progress", "Achievements", "Messages", "My Profile"], ["/mentor", "/admin", "/parent"]],
+    ["mentor", /\/mentor$/, ["Overview", "My Students", "Sessions & Attendance", "Review & Feedback", "Messages"], ["/admin", "/parent", "/app"]],
+    ["parent", /\/parent$/, ["My Children", "Messages", "Notifications"], ["/mentor", "/admin", "/app"]],
+    ["superadmin", /\/admin$/, ["Overview", "Users", "Roles & Permissions", "Mentor Allocation", "Activity Logs", "System Health"], ["/parent", "/app"]],
+  ];
+  for (const [user, home, links, forbidden] of cases) {
+    await page.context().clearCookies();
+    await login(page, `${user}@pathfinder.demo`);
+    await expect(page).toHaveURL(home);
+    const nav = page.locator("aside nav");
+    for (const name of links) await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
+    for (const path of forbidden) {
+      await page.goto(path);
+      await expect(page).toHaveURL(home); // RequireAuth sends people back to their own home
+    }
+    await nav.getByRole("button", { name: "Sign out" }).click();
+    await expect(page).toHaveURL(/\/login/);
+  }
+});
+
+test("student sees courses, tasks and live sessions from real data", async ({ page }) => {
+  await login(page, "aarav@pathfinder.demo");
+  await page.getByRole("link", { name: "My Courses", exact: true }).first().click();
+  await expect(page.getByRole("heading", { name: "STEM & Technology" })).toBeVisible();
+  await page.getByRole("link", { name: "My Tasks", exact: true }).first().click();
+  await page.getByRole("tab", { name: "Quiz results" }).click();
+  await expect(page.getByText("Coding Concepts Check").first()).toBeVisible();
+  await page.getByRole("link", { name: "Live Sessions", exact: true }).first().click();
+  await expect(page.getByText(/You attended \d+ of \d+ sessions/)).toBeVisible();
+  await expect(page.getByText("Weekly mentor check-in").first()).toBeVisible();
+});
+
+test("mentor marks attendance for a past session", async ({ page }) => {
+  await login(page, "mentor@pathfinder.demo");
+  await page.getByRole("link", { name: "Sessions & Attendance" }).click();
+  await page.getByRole("tab", { name: "Past & attendance" }).click();
+  await page.getByRole("button", { name: /attendance/i }).first().click();
+  await page.getByRole("button", { name: "Mark everyone present" }).click();
+  await page.getByRole("button", { name: "Save attendance" }).click();
+  await expect(page.getByText("Attendance saved")).toBeVisible();
 });

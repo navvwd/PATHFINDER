@@ -290,6 +290,41 @@ def overview(db: DB, user: User = Depends(require_permission(P.USERS_MANAGE))):
         "signups_7d": db.scalar(select(func.count()).select_from(User).where(User.created_at >= since)),
         "security_events_7d": db.scalar(select(func.count()).select_from(AuditLog).where(AuditLog.category == "security", AuditLog.created_at >= since)),
         "ai_requests_7d": db.scalar(select(func.count()).select_from(AIUsageLog).where(AIUsageLog.created_at >= since)),
+        **_platform_health(db),
+    }
+
+
+def _platform_health(db) -> dict:
+    """Account activity, allocation gaps, content and session volume for the admin overview."""
+    from ...models import Activity, Assessment, Batch, BatchMember, LiveSession, Mentor, SessionParticipant, Student
+    t = utcnow()
+    live = select(User).where(User.deleted_at.is_(None))
+    count = lambda stmt: int(db.scalar(select(func.count()).select_from(stmt.subquery())) or 0)  # noqa: E731
+    unallocated = count(select(Student.id).where(Student.deleted_at.is_(None), ~Student.id.in_(select(BatchMember.student_id))))
+    idle_mentors = count(select(Mentor.id).where(~Mentor.id.in_(select(Batch.mentor_id).where(Batch.deleted_at.is_(None)))))
+    marked = db.execute(select(SessionParticipant.attendance, func.count()).where(SessionParticipant.attendance != "pending")
+                        .group_by(SessionParticipant.attendance)).all()
+    total_marked = sum(n for _, n in marked)
+    attended = sum(n for a, n in marked if a in ("present", "late"))
+    return {
+        "accounts": {
+            "active": count(live.where(User.is_active.is_(True))),
+            "inactive": count(live.where(User.is_active.is_(False))),
+            "active_30d": count(live.where(User.last_login_at >= t - timedelta(days=30))),
+            "never_logged_in": count(live.where(User.last_login_at.is_(None))),
+            "locked": count(live.where(User.locked_until > t)),
+        },
+        "allocation": {"students_without_mentor": unallocated, "mentors_without_batches": idle_mentors},
+        "content": {
+            "activities": count(select(Activity.id).where(Activity.deleted_at.is_(None), Activity.status == "published")),
+            "drafts": count(select(Activity.id).where(Activity.deleted_at.is_(None), Activity.status == "draft")),
+            "assessments": count(select(Assessment.id).where(Assessment.deleted_at.is_(None), Assessment.status == "published")),
+        },
+        "sessions": {
+            "upcoming": count(select(LiveSession.id).where(LiveSession.status == "scheduled", LiveSession.starts_at >= t)),
+            "last_7d": count(select(LiveSession.id).where(LiveSession.starts_at.between(t - timedelta(days=7), t))),
+            "attendance_rate": round(attended / total_marked * 100) if total_marked else None,
+        },
     }
 
 

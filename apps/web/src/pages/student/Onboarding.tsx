@@ -140,7 +140,7 @@ function InterestsStep({ defaults, onDone }: { defaults: { favourite_subjects: s
                   {d.subdomains.map((s) => (
                     <button type="button" key={s.id} aria-pressed={selSubs.includes(s.id)}
                       onClick={() => setSubs(selSubs.includes(s.id) ? selSubs.filter((x) => x !== s.id) : [...selSubs, s.id])}
-                      className={cx("rounded-full border px-2.5 py-0.5 text-xs", selSubs.includes(s.id) ? "border-primary bg-primary text-on-primary" : "border-line text-subtle")}>{s.name}</button>
+                      className={cx("rounded-full border px-2.5 py-0.5 text-xs", selSubs.includes(s.id) ? "border-inverse bg-inverse text-on-inverse" : "border-line text-subtle")}>{s.name}</button>
                   ))}
                 </div>
               )}

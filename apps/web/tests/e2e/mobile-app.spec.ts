@@ -10,7 +10,7 @@ test.describe("mobile app (Expo web build)", () => {
   test("student signs in, sees dashboard, opens an activity and progress", async ({ page }) => {
     await page.goto(MOBILE_URL);
     await page.getByLabel("Email or mobile number").fill("diya@pathfinder.demo");
-    await page.getByLabel("Password").fill("Demo@1234");
+    await page.getByLabel("Password", { exact: true }).fill("Demo@1234");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page.getByText(/Good (morning|afternoon|evening), Diya!/)).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("Today's activities")).toBeVisible();
@@ -23,7 +23,7 @@ test.describe("mobile app (Expo web build)", () => {
   test("guardian sees only linked children", async ({ page }) => {
     await page.goto(MOBILE_URL);
     await page.getByLabel("Email or mobile number").fill("parent@pathfinder.demo");
-    await page.getByLabel("Password").fill("Demo@1234");
+    await page.getByLabel("Password", { exact: true }).fill("Demo@1234");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page.getByText("Aarav Mehta")).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("Diya Nair")).toHaveCount(0);

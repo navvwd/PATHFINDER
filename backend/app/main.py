@@ -4,7 +4,7 @@ from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from .api.v1 import activities, admin, ai, assessments, auth, domains, growth, institutions, interests, people, progress, students
+from .api.v1 import activities, admin, ai, assessments, auth, domains, experience, growth, institutions, interests, people, progress, students
 from .core.config import get_settings
 from .core.database import SessionLocal
 from .core.errors import register_error_handlers
@@ -42,7 +42,7 @@ app.add_middleware(
 register_error_handlers(app)
 
 api = APIRouter(prefix=settings.API_PREFIX)
-for module in (auth, students, domains, interests, activities, assessments, progress, growth, ai, people,
+for module in (auth, experience, students, domains, interests, activities, assessments, progress, growth, ai, people,
                institutions, admin):
     api.include_router(module.router)
 app.include_router(api)

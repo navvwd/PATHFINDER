@@ -4,7 +4,7 @@ import { dimensionLabels } from "@pathfinder/design-system";
 import { Info, TrendingDown, TrendingUp, Minus } from "lucide-react";
 import { useState } from "react";
 import { DimensionRadar, DomainBars, TrendChart } from "@/components/charts";
-import { AiLabel, Badge, Button, Card, CardBody, CardHeader, ConfidenceBadge, EmptyState, PageHeader, ProgressBar, QueryState, Stat, Tabs, Textarea, useToast } from "@/components/ui";
+import { AiLabel, Badge, Button, Card, CardBody, CardHeader, ConfidenceBadge, EmptyState, ProgressBar, QueryState, Stat, Tabs, useToast } from "@/components/ui";
 import { api } from "@/lib/auth";
 import { fmtDateTime, score, titleCase } from "@/lib/format";
 
@@ -109,19 +109,5 @@ function EventLog({ studentId }: { studentId?: string }) {
             <span className="flex items-center gap-3 text-xs text-subtle">{e.score_pct != null && <Badge tone="primary">{e.score_pct.toFixed(0)}%</Badge>}{fmtDateTime(e.occurred_at)}</span></li>))}</ul>}
       </QueryState>
     </CardBody></Card>
-  );
-}
-
-export function Progress() {
-  const toast = useToast();
-  const [text, setText] = useState("");
-  const reflect = useMutation({ mutationFn: () => api.progress.reflect({ text }), onSuccess: () => { setText(""); toast.success("Reflection saved (+10 XP)"); }, onError: (e) => toast.error(e) });
-  return (
-    <>
-      <PageHeader title="Progress analytics" subtitle="You are only ever compared with your past self." />
-      <ProgressPanel />
-      <Card className="mt-6"><CardHeader title="Write a reflection" subtitle="How is your learning going? Reflections are part of your progress record." />
-        <CardBody className="space-y-3"><Textarea aria-label="Reflection" value={text} onChange={(e) => setText(e.target.value)} /><div className="flex justify-end"><Button disabled={text.length < 3} loading={reflect.isPending} onClick={() => reflect.mutate()}>Save reflection</Button></div></CardBody></Card>
-    </>
   );
 }

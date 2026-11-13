@@ -43,8 +43,8 @@ export async function bootstrapSession(): Promise<void> {
   }
 }
 
-export async function signIn(identifier: string, password: string): Promise<Me> {
-  await api.auth.login(identifier, password);
+export async function signIn(identifier: string, password: string, remember = true): Promise<Me> {
+  await api.auth.login(identifier, password, remember);
   const me = await api.auth.me();
   useAuth.getState().setMe(me);
   return me;

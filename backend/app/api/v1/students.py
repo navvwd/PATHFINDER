@@ -32,7 +32,7 @@ student_only = require_permission(P.PROFILE_UPDATE_SELF, P.INTERESTS_MANAGE_SELF
 
 @router.get("", response_model=Page[StudentSummary])
 def list_students(user: CurrentUser, db: DB, paging: Paging, age_group: str | None = Query(None, max_length=20),
-                  institution_id: uuid.UUID | None = None):
+                  institution_id: uuid.UUID | None = None, unallocated: bool = False):
     if user.role == Role.STUDENT:
         raise Forbidden("Students cannot list other students")
     ids = accessible_student_ids(db, user)
@@ -41,6 +41,9 @@ def list_students(user: CurrentUser, db: DB, paging: Paging, age_group: str | No
         stmt = stmt.where(Student.id.in_(ids or [uuid.uuid4()]))
     if institution_id:
         stmt = stmt.where(Student.institution_id == institution_id)
+    if unallocated:  # students with no mentor batch yet (allocation screen)
+        from ...models import BatchMember
+        stmt = stmt.where(~Student.id.in_(select(BatchMember.student_id)))
     if paging.q:
         like = f"%{paging.q.lower()}%"
         stmt = stmt.where(or_(User.full_name.ilike(like), Student.school_name.ilike(like)))

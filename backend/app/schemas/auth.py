@@ -69,6 +69,7 @@ class LoginRequest(BaseModel):
     identifier: str = Field(min_length=3, max_length=255, description="Email or mobile number")
     password: str = Field(min_length=1, max_length=128)
     client: Literal["web", "mobile"] = "web"
+    remember_me: bool = True
 
 
 class RefreshRequest(BaseModel):

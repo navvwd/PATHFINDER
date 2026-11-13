@@ -6,16 +6,25 @@
 export const palette = {
   brand: { 50: "#fff3ef", 100: "#ffe1d7", 200: "#ffc0ad", 300: "#ff9576", 400: "#ff6a45", 500: "#ff4d24", 600: "#e93822", 700: "#c72e12", 800: "#9c2410", 900: "#5c160a" },
   neutral: { 0: "#ffffff", 50: "#f7f7f5", 100: "#eeeeec", 200: "#e5e5e3", 500: "#777777", 900: "#171717" },
-  accent: { 400: "#fbbf24", 500: "#f59e0b", 600: "#d97706" },
-  success: "#059669",
-  warning: "#d97706",
-  danger: "#dc2626",
-  info: "#0284c7",
+  /** text-safe orange (AA on light surfaces) */
+  accent: { 400: "#ff6a45", 500: "#c72e12", 600: "#9c2410" },
+  success: "#15803d",
+  warning: "#a16207",
+  danger: "#e93822",
+  info: "#3f3f3d",
+} as const;
+
+/** Canonical brand tokens (light). Same names as the CSS variables in apps/web. */
+export const brand = {
+  primary: "#ff4d24", primaryHover: "#e93822", secondary: "#171717", accent: "#c72e12",
+  background: "#f7f7f5", surface: "#ffffff", surfaceMuted: "#eeeeec",
+  textPrimary: "#171717", textSecondary: "#6b6b6b", border: "#e5e5e3",
+  success: "#15803d", warning: "#a16207", danger: "#e93822",
 } as const;
 
 export const light = {
   bg: "#f7f7f5", surface: "#ffffff", surfaceMuted: "#eeeeec", border: "#e5e5e3",
-  text: "#171717", textMuted: "#777777", primary: palette.brand[500], primaryText: "#ffffff",
+  text: "#171717", textMuted: "#6b6b6b", primary: palette.brand[500], primaryText: "#ffffff",
 } as const;
 
 export const dark = {
@@ -23,14 +32,15 @@ export const dark = {
   text: "#f2f2f0", textMuted: "#a3a3a0", primary: palette.brand[400], primaryText: "#171717",
 } as const;
 
-/** Domain colours (match seeded domain.color) - used in charts and badges. */
+/** Domain colours (match seeded domain.color): a single brand scale, never new hues.
+ *  Domains are always identified by name/icon too - colour is never the only cue. */
 export const domainColors: Record<string, string> = {
-  stem: "#4f46e5",
-  "creative-arts": "#db2777",
-  business: "#d97706",
-  communication: "#0891b2",
-  science: "#059669",
-  sports: "#dc2626",
+  stem: "#171717",
+  "creative-arts": "#ff4d24",
+  business: "#c72e12",
+  communication: "#6b6b6b",
+  science: "#ff9576",
+  sports: "#5c160a",
 };
 
 export const typography = {
@@ -51,10 +61,10 @@ export const experiences = {
 } as const;
 
 export const confidenceStyle: Record<string, { label: string; color: string }> = {
-  none: { label: "Not yet explored", color: "#94a3b8" },
-  low: { label: "Early evidence", color: "#f59e0b" },
-  moderate: { label: "Growing evidence", color: "#0284c7" },
-  high: { label: "Strong evidence", color: "#059669" },
+  none: { label: "Not yet explored", color: "#d4d4d0" },
+  low: { label: "Early evidence", color: "#ffb199" },
+  moderate: { label: "Growing evidence", color: "#ff7a45" },
+  high: { label: "Strong evidence", color: "#c72e12" },
 };
 
 export const categoryLabels: Record<string, string> = {

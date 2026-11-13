@@ -19,7 +19,12 @@ const Terms = P(() => import("./pages/public/Legal"), "Terms");
 const Contact = P(() => import("./pages/public/Legal"), "Contact");
 // student
 const Onboarding = P(() => import("./pages/student/Onboarding"), "Onboarding");
-const Dashboard = P(() => import("./pages/student/Dashboard"), "Dashboard");
+const StudentHome = P(() => import("./pages/student/Learn"), "StudentHome");
+const MyCourses = P(() => import("./pages/student/Learn"), "MyCourses");
+const MyTasks = P(() => import("./pages/student/Learn"), "MyTasks");
+const LiveSessions = P(() => import("./pages/student/Learn"), "LiveSessions");
+const MyProgress = P(() => import("./pages/student/Learn"), "MyProgress");
+const MyProfile = P(() => import("./pages/student/Learn"), "MyProfile");
 const Domains = P(() => import("./pages/student/Domains"), "Domains");
 const DomainDetail = P(() => import("./pages/student/Domains"), "DomainDetail");
 const SubdomainDetail = P(() => import("./pages/student/Domains"), "SubdomainDetail");
@@ -31,7 +36,6 @@ const TakeAssessment = P(() => import("./pages/student/Assessments"), "TakeAsses
 const AttemptResult = P(() => import("./pages/student/Assessments"), "AttemptResult");
 const Projects = P(() => import("./pages/student/Projects"), "Projects");
 const Portfolio = P(() => import("./pages/student/Portfolio"), "Portfolio");
-const Progress = P(() => import("./pages/student/Progress"), "Progress");
 const Recommendations = P(() => import("./pages/student/Recommendations"), "Recommendations");
 const Roadmaps = P(() => import("./pages/student/Roadmap"), "Roadmaps");
 const RoadmapDetail = P(() => import("./pages/student/Roadmap"), "RoadmapDetail");
@@ -55,6 +59,7 @@ const ReviewQueue = P(() => import("./pages/mentor/Reviews"), "ReviewQueue");
 const ReviewSubmission = P(() => import("./pages/mentor/Reviews"), "ReviewSubmission");
 const ReviewAttempt = P(() => import("./pages/mentor/Reviews"), "ReviewAttempt");
 const Batches = P(() => import("./pages/mentor/Mentor"), "Batches");
+const MentorSessions = P(() => import("./pages/mentor/Sessions"), "MentorSessions");
 const ActivityManager = P(() => import("./pages/mentor/Content"), "ActivityManager");
 const AssessmentBuilder = P(() => import("./pages/mentor/Content"), "AssessmentBuilder");
 // institution
@@ -73,6 +78,8 @@ const AiSettings = P(() => import("./pages/admin/SuperAdmin"), "AiSettings");
 const FeatureFlags = P(() => import("./pages/admin/SuperAdmin"), "FeatureFlags");
 const Security = P(() => import("./pages/admin/SuperAdmin"), "Security");
 const SystemMonitor = P(() => import("./pages/admin/SuperAdmin"), "SystemMonitor");
+const RolesPermissions = P(() => import("./pages/admin/People"), "RolesPermissions");
+const Allocation = P(() => import("./pages/admin/People"), "Allocation");
 
 const STAFF = ["mentor", "teacher", "institution_admin", "platform_admin", "super_admin"];
 const ADMINS = ["platform_admin", "super_admin"];
@@ -95,7 +102,12 @@ export function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route element={<RequireAuth roles={["student"]} />}>
-              <Route path="/app" element={<Dashboard />} />
+              <Route path="/app" element={<StudentHome />} />
+              <Route path="/app/courses" element={<MyCourses />} />
+              <Route path="/app/tasks" element={<MyTasks />} />
+              <Route path="/app/sessions" element={<LiveSessions />} />
+              <Route path="/app/messages" element={<Messages />} />
+              <Route path="/app/profile" element={<MyProfile />} />
               <Route path="/app/onboarding" element={<Onboarding />} />
               <Route path="/app/domains" element={<Domains />} />
               <Route path="/app/domains/:slug" element={<DomainDetail />} />
@@ -108,7 +120,7 @@ export function App() {
               <Route path="/app/assessments/attempts/:id" element={<AttemptResult />} />
               <Route path="/app/projects" element={<Projects />} />
               <Route path="/app/portfolio" element={<Portfolio />} />
-              <Route path="/app/progress" element={<Progress />} />
+              <Route path="/app/progress" element={<MyProgress />} />
               <Route path="/app/recommendations" element={<Recommendations />} />
               <Route path="/app/roadmap" element={<Roadmaps />} />
               <Route path="/app/roadmap/:id" element={<RoadmapDetail />} />
@@ -138,6 +150,7 @@ export function App() {
               <Route path="/mentor/reviews/:id" element={<ReviewSubmission />} />
               <Route path="/mentor/attempts/:id" element={<ReviewAttempt />} />
               <Route path="/mentor/batches" element={<Batches />} />
+              <Route path="/mentor/sessions" element={<MentorSessions />} />
               <Route path="/mentor/activities" element={<ActivityManager />} />
               <Route path="/mentor/assessments" element={<AssessmentBuilder />} />
               <Route path="/mentor/messages" element={<Messages />} />
@@ -156,6 +169,8 @@ export function App() {
               <Route path="/admin/institutions" element={<AdminInstitutions />} />
               <Route path="/admin/domains" element={<AdminDomains />} />
               <Route path="/admin/notifications" element={<AdminBroadcast />} />
+              <Route path="/admin/roles" element={<RolesPermissions />} />
+              <Route path="/admin/allocation" element={<Allocation />} />
             </Route>
             <Route element={<RequireAuth roles={["super_admin"]} />}>
               <Route path="/admin/scoring" element={<ScoringConfig />} />

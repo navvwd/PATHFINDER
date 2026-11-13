@@ -104,7 +104,7 @@ export function TakeAssessment() {
             </Card>
             <div className="mt-4 flex items-center justify-between">
               <Button variant="secondary" disabled={i === 0} onClick={() => setI(i - 1)}>Previous</Button>
-              <div className="hidden gap-1 sm:flex">{att.questions.map((x, k) => <button key={x.id} aria-label={`Question ${k + 1}`} onClick={() => setI(k)} className={cx("size-7 rounded-lg text-xs", k === i ? "bg-primary text-on-primary" : answers[x.id] !== undefined ? "bg-primary-soft text-primary-ink" : "bg-muted")}>{k + 1}</button>)}</div>
+              <div className="hidden gap-1 sm:flex">{att.questions.map((x, k) => <button key={x.id} aria-label={`Question ${k + 1}`} onClick={() => setI(k)} className={cx("size-7 rounded-lg text-xs", k === i ? "bg-inverse text-on-inverse" : answers[x.id] !== undefined ? "bg-primary-soft text-primary-ink" : "bg-muted")}>{k + 1}</button>)}</div>
               {i < att.questions.length - 1 ? <Button onClick={() => setI(i + 1)}>Next</Button> : <Button loading={submit.isPending} onClick={() => submit.mutate()}>Submit</Button>}
             </div>
           </div>
@@ -126,7 +126,7 @@ function AnswerInput({ q, value, onChange }: { q: Attempt["questions"][number]; 
     return <div className="grid gap-2">{opts.map((o) => <label key={o.key} className="flex items-center gap-2 rounded-xl border border-line p-3 text-sm"><input type="checkbox" checked={v.includes(o.key)} onChange={() => onChange(v.includes(o.key) ? v.filter((x) => x !== o.key) : [...v, o.key])} />{o.label}</label>)}</div>;
   }
   if (q.type === "numeric") return <Input type="number" aria-label="Your answer" value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))} />;
-  if (q.type === "rating") return <div className="flex gap-2">{[1, 2, 3, 4, 5].map((n) => <button key={n} onClick={() => onChange(n)} className={cx("size-11 rounded-xl border", value === n ? "border-primary bg-primary text-on-primary" : "border-line")}>{n}</button>)}</div>;
+  if (q.type === "rating") return <div className="flex gap-2">{[1, 2, 3, 4, 5].map((n) => <button key={n} onClick={() => onChange(n)} className={cx("size-11 rounded-xl border", value === n ? "border-inverse bg-inverse text-on-inverse" : "border-line")}>{n}</button>)}</div>;
   if (q.type === "short_text") return <Input aria-label="Your answer" value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} />;
   return <Textarea aria-label="Your answer" className="min-h-40" value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} />;
 }

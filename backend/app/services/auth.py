@@ -183,18 +183,28 @@ def authenticate(db: Session, identifier: str, password: str, request: Request |
     return user
 
 
-def issue_tokens(db: Session, user: User, client: str, request: Request | None = None) -> tuple[str, int, str]:
+SHORT_SESSION = timedelta(hours=12)  # "remember me" unticked
+
+
+def issue_tokens(db: Session, user: User, client: str, request: Request | None = None,
+                 remember: bool = True) -> tuple[str, int, str]:
     s = get_settings()
+    lifetime = timedelta(days=s.REFRESH_TOKEN_DAYS) if remember else SHORT_SESSION
     access, expires_in = create_access_token(user.id, user.role, user.institution_id, user.token_version)
     refresh = new_opaque_token()
     db.add(UserSession(user_id=user.id, refresh_token_hash=hash_token(refresh), client=client,
                        user_agent=(request.headers.get("user-agent", "")[:300] if request else None),
                        ip_address=(request.client.host if request and request.client else None),
-                       expires_at=utcnow() + timedelta(days=s.REFRESH_TOKEN_DAYS), last_used_at=utcnow()))
+                       expires_at=utcnow() + lifetime, last_used_at=utcnow()))
     return access, expires_in, refresh
 
 
-def rotate_refresh(db: Session, refresh: str, request: Request | None = None) -> tuple[User, str, int, str]:
+def is_remembered(sess: UserSession) -> bool:
+    """Short sessions keep their short (sliding) lifetime across rotations."""
+    return sess.expires_at - sess.created_at > timedelta(days=1)
+
+
+def rotate_refresh(db: Session, refresh: str, request: Request | None = None) -> tuple[User, str, int, str, bool]:
     sess = db.scalar(select(UserSession).where(UserSession.refresh_token_hash == hash_token(refresh)))
     now = utcnow()
     if sess is None:
@@ -213,8 +223,9 @@ def rotate_refresh(db: Session, refresh: str, request: Request | None = None) ->
     if user is None or not user.is_active or user.deleted_at is not None:
         raise Unauthorized("Account is not active")
     sess.revoked_at = now
-    access, expires_in, new_refresh = issue_tokens(db, user, sess.client, request)
-    return user, access, expires_in, new_refresh
+    remember = is_remembered(sess)
+    access, expires_in, new_refresh = issue_tokens(db, user, sess.client, request, remember)
+    return user, access, expires_in, new_refresh, remember
 
 
 def revoke_session(db: Session, refresh: str) -> None:

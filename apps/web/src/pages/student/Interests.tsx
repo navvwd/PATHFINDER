@@ -63,12 +63,12 @@ function Chooser() {
                     <>
                       <div className="mt-4 flex items-center gap-2 text-sm">
                         <span className="text-subtle">How much?</span>
-                        {[1, 2, 3, 4, 5].map((n) => <button key={n} aria-label={`Interest level ${n}`} onClick={() => setStrength(d.id, n)} className={cx("size-7 rounded-full text-xs", n <= on.strength ? "bg-primary text-on-primary" : "bg-muted")}>{n}</button>)}
+                        {[1, 2, 3, 4, 5].map((n) => <button key={n} aria-label={`Interest level ${n}`} onClick={() => setStrength(d.id, n)} className={cx("size-7 rounded-full text-xs", n <= on.strength ? "bg-inverse text-on-inverse" : "bg-muted")}>{n}</button>)}
                       </div>
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {d.subdomains.map((sd) => {
                           const picked = s.some((x) => x.subdomain_id === sd.id);
-                          return <button key={sd.id} aria-pressed={picked} onClick={() => toggleSub(d.id, sd.id)} className={cx("rounded-full border px-2.5 py-0.5 text-xs", picked ? "border-primary bg-primary text-on-primary" : "border-line text-subtle")}>{sd.name}</button>;
+                          return <button key={sd.id} aria-pressed={picked} onClick={() => toggleSub(d.id, sd.id)} className={cx("rounded-full border px-2.5 py-0.5 text-xs", picked ? "border-inverse bg-inverse text-on-inverse" : "border-line text-subtle")}>{sd.name}</button>;
                         })}
                       </div>
                     </>

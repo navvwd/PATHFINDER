@@ -20,3 +20,7 @@ backend/*.db
 .DS_Store
 backend-dev.log
 web-dev.log
+mobile-web.log
+.mobile-export-check/
+apps/mobile/.expo/
+apps/mobile/dist/

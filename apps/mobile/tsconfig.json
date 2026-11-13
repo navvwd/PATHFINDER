@@ -1,0 +1,31 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@pathfinder/api-client": [
+        "../../packages/api-client/src/index.ts"
+      ],
+      "@pathfinder/shared-types": [
+        "../../packages/shared-types/src/index.ts"
+      ],
+      "@pathfinder/validation": [
+        "../../packages/validation/src/index.ts"
+      ],
+      "@pathfinder/design-system": [
+        "../../packages/design-system/src/index.ts"
+      ],
+      "zod": [
+        "./node_modules/zod"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

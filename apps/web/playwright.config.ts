@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: [["list"]],
   use: { baseURL: process.env.E2E_BASE_URL ?? "http://localhost:5173", trace: "retain-on-failure", screenshot: "only-on-failure" },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Chrome"] }, testIgnore: /responsive/ },
-    { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /responsive/ },
+    { name: "desktop", use: { ...devices["Desktop Chrome"] }, testIgnore: /responsive|mobile-app/ },
+    { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /responsive|mobile-app/ },
   ],
 });

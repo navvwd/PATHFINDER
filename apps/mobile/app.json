@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "PathFinder AI",
+    "slug": "pathfinder-ai",
+    "scheme": "pathfinder",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.edutainal.pathfinder"
+    },
+    "android": {
+      "package": "com.edutainal.pathfinder",
+      "edgeToEdgeEnabled": true
+    },
+    "web": { "bundler": "metro" },
+    "plugins": ["expo-router", "expo-secure-store", "expo-notifications"],
+    "extra": {
+      "apiUrl": null
+    }
+  }
+}

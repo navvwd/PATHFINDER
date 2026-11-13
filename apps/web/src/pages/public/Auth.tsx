@@ -11,12 +11,13 @@ import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import { z } from "zod";
 import { Button, Card, Field, Input, Tabs } from "@/components/ui";
 import { api, homeFor, signIn, useAuth } from "@/lib/auth";
+import { BrandMark } from "@/components/brand";
 
 function AuthLayout({ title, subtitle, children }: { title: string; subtitle?: ReactNode; children: ReactNode }) {
   return (
     <div className="flex min-h-full items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-6 flex items-center justify-center gap-2"><img src="/favicon.svg" alt="" className="size-9" /><span className="font-display text-xl font-extrabold">PathFinder <span className="text-primary">AI</span></span></Link>
+        <Link to="/" aria-label="PathFinder AI home" className="mb-6 flex justify-center"><BrandMark size="lg" /></Link>
         <Card className="p-6 sm:p-8">
           <h1 className="text-2xl font-bold">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-subtle">{subtitle}</p>}

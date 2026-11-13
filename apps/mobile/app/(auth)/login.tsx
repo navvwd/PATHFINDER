@@ -2,7 +2,7 @@ import { friendlyError } from "@pathfinder/api-client";
 import { loginSchema } from "@pathfinder/validation";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Field } from "../../components/ui";
 import { signIn } from "../../services/api";
@@ -23,6 +23,7 @@ export default function Login() {
     <SafeAreaView className="flex-1 bg-bg">
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1">
         <ScrollView contentContainerClassName="flex-grow justify-center p-6">
+          <Image source={require("../../assets/ev-mark.png")} accessibilityLabel="Edutainal Ventures" style={{ width: 100, height: 48 }} resizeMode="contain" className="mb-4" />
           <Text className="text-3xl font-extrabold text-ink">PathFinder <Text className="text-primary">AI</Text></Text>
           <Text className="mb-8 mt-2 text-subtle">Discover what you love. Grow what you're good at.</Text>
           {error ? <Text accessibilityRole="alert" className="mb-3 rounded-xl bg-danger-soft p-3 text-danger">{error}</Text> : null}

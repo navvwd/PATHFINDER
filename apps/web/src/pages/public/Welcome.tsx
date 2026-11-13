@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import { Link, Navigate } from "react-router";
 import { Button, cx } from "@/components/ui";
 import { api, homeFor, useAuth } from "@/lib/auth";
+import { BrandLockup, BrandMark } from "@/components/brand";
 
 const DOMAIN_ICONS: Record<string, typeof Cpu> = {
   stem: Cpu, "creative-arts": Palette, business: Briefcase, communication: Megaphone, science: FlaskConical, sports: Trophy,
@@ -110,10 +111,7 @@ export function Welcome() {
       <section className="relative overflow-hidden" style={{ background: "linear-gradient(180deg, var(--pf-sky-top) 0%, #5aa8f7 38%, var(--pf-sky-bottom) 78%)" }}>
         <Clouds />
         <header className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2 text-white">
-            <img src="/favicon.svg" alt="" className="size-7" />
-            <span className="font-display text-lg font-semibold tracking-tight">PathFinder AI</span>
-          </Link>
+          <Link to="/" aria-label="PathFinder AI home"><BrandMark tone="light" /></Link>
           <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
             {[["#domains", "Domains"], ["#about", "About"], ["#how", "How it works"], ["/institutions/register", "For schools"]].map(([href, label]) => (
               href.startsWith("#") ? <a key={href} href={href} className="eyebrow text-white/90 hover:text-white">{label}</a>
@@ -245,7 +243,13 @@ export function Welcome() {
         </div>
       </section>
 
-      <footer className="border-t border-line py-6 text-center text-sm text-subtle">PathFinder AI - an Edutainal Ventures project</footer>
+      <footer className="border-t border-line py-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 text-center">
+          <BrandLockup className="h-24 dark:hidden" />
+          <BrandLockup tone="light" className="hidden h-24 dark:block" />
+          <p className="text-sm text-subtle">PathFinder AI is an Edutainal Ventures project.</p>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { Navigate, NavLink, Outlet, useLocation, useNavigate } from "react-route
 import { api, homeFor, signOut, useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
 import { Avatar, cx, PageSkeleton } from "./ui";
+import { BrandMark } from "./brand";
 
 type NavItem = { to: string; label: string; icon: ReactNode; end?: boolean };
 const I = (C: typeof Home) => <C className="size-[18px]" aria-hidden />;
@@ -111,8 +112,7 @@ export function AppShell() {
   const sidebar = (
     <nav aria-label="Main" className="flex h-full flex-col gap-1 p-3">
       <NavLink to={homeFor(me)} className="mb-4 flex items-center gap-2 px-2 py-1" onClick={() => setOpen(false)}>
-        <img src="/favicon.svg" alt="" className="size-8" />
-        <span className="font-display text-lg font-extrabold">PathFinder <span className="text-primary">AI</span></span>
+        <BrandMark />
       </NavLink>
       {nav.map((n) => (
         <NavLink key={n.to} to={n.to} end={n.end} onClick={() => setOpen(false)}

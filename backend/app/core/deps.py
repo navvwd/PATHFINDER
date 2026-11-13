@@ -17,6 +17,7 @@ from .errors import Forbidden, RateLimited, Unauthorized
 from .permissions import GLOBAL_ROLES, P, Role, has_permission
 from .ratelimit import limiter
 from .security import decode_access_token
+from .net import client_ip
 
 bearer = HTTPBearer(auto_error=False)
 DB = Annotated[Session, Depends(get_db)]
@@ -76,7 +77,7 @@ def is_global(user: User) -> bool:
 
 def rate_limit(name: str, limit: int, window_seconds: int = 60):
     def _dep(request: Request) -> None:
-        ident = getattr(request.state, "user_id", None) or (request.client.host if request.client else "anon")
+        ident = getattr(request.state, "user_id", None) or (client_ip(request) or "anon")
         ok, _ = limiter.hit(f"{name}:{ident}", limit, window_seconds)
         if not ok:
             raise RateLimited("Too many requests, please slow down")

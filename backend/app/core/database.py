@@ -15,7 +15,9 @@ def _build_engine(url: str, echo: bool = False) -> Engine:
     if url.startswith("sqlite"):
         kwargs["connect_args"] = {"check_same_thread": False}
     else:
-        kwargs.update(pool_size=10, max_overflow=20)
+        # Small pools suit serverless instances; prepare_threshold=None keeps psycopg
+        # compatible with transaction-pooling proxies such as PgBouncer / Neon pooled URLs.
+        kwargs.update(pool_size=5, max_overflow=5, connect_args={"prepare_threshold": None})
     engine = create_engine(url, **kwargs)
     if url.startswith("sqlite"):
         @event.listens_for(engine, "connect")

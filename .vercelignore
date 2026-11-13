@@ -1,0 +1,17 @@
+# Uploaded by `vercel deploy` from the repo root for the web project (Root Directory: apps/web).
+# Only apps/web, packages/* and the root npm workspace files are needed.
+.venv
+**/node_modules
+**/__pycache__
+.vercel-api
+backend
+ai-engine
+apps/mobile
+docs
+infrastructure
+scripts
+**/test-results
+**/playwright-report
+**/*.db
+**/*.log
+.github

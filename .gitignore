@@ -25,3 +25,7 @@ mobile-web.log
 apps/mobile/.expo/
 apps/mobile/dist/
 backend/*.seeded
+
+# Vercel
+.vercel
+.vercel-api/

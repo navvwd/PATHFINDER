@@ -54,6 +54,7 @@ from ...services.audit import audit
 from ...services.auth import link_guardian
 from ...services.notify import notify, notify_guardians
 from ...services.progress import progress_summary
+from ...core.net import client_ip
 
 router = APIRouter(tags=["people"])
 
@@ -176,7 +177,7 @@ def set_consent(student_id: uuid.UUID, data: ConsentIn, request: Request, db: DB
     s = ensure_student_access(db, user, student_id)
     g = guardian_for_user(db, user)
     db.add(ConsentRecord(student_id=s.id, guardian_id=g.id, granted_by_user_id=user.id, consent_type=data.consent_type,
-                         granted=data.granted, ip_address=request.client.host if request.client else None))
+                         granted=data.granted, ip_address=client_ip(request)))
     if data.consent_type == "data_processing":
         s.consent_status = "granted" if data.granted else "revoked"
     if data.consent_type == "portfolio_sharing" and not data.granted:

@@ -41,6 +41,8 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: Annotated[list[str], NoDecode] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8081"]
     COOKIE_SECURE: bool = False
+    # Use X-Forwarded-For & co. for client IPs. Only behind a trusted proxy (e.g. Vercel).
+    TRUST_PROXY_HEADERS: bool = False
 
     RATE_LIMIT_PER_MINUTE: int = 240
     AUTH_RATE_LIMIT_PER_MINUTE: int = 20
@@ -76,6 +78,15 @@ class Settings(BaseSettings):
                 import json
                 return json.loads(v)
             return [s.strip() for s in v.split(",") if s.strip()]
+        return v
+
+    @field_validator("DATABASE_URL", mode="after")
+    @classmethod
+    def _psycopg_driver(cls, v: str) -> str:
+        # Hosted Postgres (Neon, Heroku...) hands out postgres:// URLs; we use the psycopg 3 driver.
+        for prefix in ("postgres://", "postgresql://"):
+            if v.startswith(prefix):
+                return "postgresql+psycopg://" + v[len(prefix):]
         return v
 
     @property

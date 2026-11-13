@@ -36,6 +36,7 @@ from ..models import (
 from .audit import audit
 from .gamification import ensure_default_goals
 from .notify import notify
+from ..core.net import client_ip
 
 
 def age_on(dob: date, today: date | None = None) -> int:
@@ -194,7 +195,7 @@ def issue_tokens(db: Session, user: User, client: str, request: Request | None =
     refresh = new_opaque_token()
     db.add(UserSession(user_id=user.id, refresh_token_hash=hash_token(refresh), client=client,
                        user_agent=(request.headers.get("user-agent", "")[:300] if request else None),
-                       ip_address=(request.client.host if request and request.client else None),
+                       ip_address=client_ip(request),
                        expires_at=utcnow() + lifetime, last_used_at=utcnow()))
     return access, expires_in, refresh
 

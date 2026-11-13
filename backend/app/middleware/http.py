@@ -10,6 +10,7 @@ from starlette.responses import JSONResponse, Response
 
 from ..core.config import get_settings
 from ..core.ratelimit import limiter
+from ..core.net import client_ip
 
 log = logging.getLogger("pathfinder.http")
 
@@ -25,7 +26,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         s = get_settings()
 
         if request.url.path.startswith(s.API_PREFIX):
-            ident = request.client.host if request.client else "anon"
+            ident = client_ip(request) or "anon"
             ok, remaining = limiter.hit(f"global:{ident}", s.RATE_LIMIT_PER_MINUTE, 60)
             if not ok:
                 return JSONResponse({"error": {"code": "rate_limited", "message": "Too many requests",

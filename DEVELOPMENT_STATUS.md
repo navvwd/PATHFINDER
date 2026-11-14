@@ -78,7 +78,7 @@ Deployed on Vercel (team "navvwd's projects"), auto-deployed from GitHub `navvwd
 | pathfinder-api | https://pathfinder-api-mu.vercel.app | `deploy/vercel-api` | FastAPI on Vercel Python; installs `backend/` and `ai-engine/` as packages |
 
 - Pushes to `main` deploy both to production; other branches get preview deployments.
-- Database: Neon Postgres (`pathfinder-db`, Vercel Marketplace), env vars injected by the integration. Migrations are **not** run on deploy: run `python -m app.cli migrate` locally with `DATABASE_URL` set to the Neon *unpooled* URL after adding a migration.
+- Database: Neon Postgres (`pathfinder-db`, Vercel Marketplace, US East), env vars injected by the integration. Demo data was loaded by seeding a local SQLite file and copying it with `python -m app.copy_db --source sqlite:///seed.db --target <unpooled URL> --replace` (seeding remotely row by row timed out over the long-distance link). Migrations are **not** run on deploy: run `python -m app.cli migrate` locally with `DATABASE_URL` set to the Neon *unpooled* URL after adding a migration.
 - API production env: `ENVIRONMENT=production`, generated `JWT_SECRET`, `COOKIE_SECURE`, `TRUST_PROXY_HEADERS`, `STORAGE_DIR=/tmp/...`, `AI_PROVIDER=none`, `CORS_ORIGINS`/`FRONTEND_URL` = web URL.
 - Limits on this setup: uploads live in `/tmp` and do not persist (needs Vercel Blob); rate-limit counters are per instance (add Redis/Upstash for shared limits); no AI key configured.
 - Docker images/compose remain available for self-hosting (`infrastructure/deployment/DEPLOYMENT.md`).

@@ -31,9 +31,11 @@ def migrate() -> None:
 def seed(demo: bool) -> None:
     from .seed import seed_catalog, seed_demo
 
+    # Separate transactions: a failed demo load must not roll back the catalogue.
     with session_scope() as db:
         print("catalog:", seed_catalog(db))
-        if demo:
+    if demo:
+        with session_scope() as db:
             print("demo:", seed_demo(db))
 
 
